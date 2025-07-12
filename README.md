@@ -138,8 +138,8 @@ Mọi đóng góp đều được hoan nghênh! Hãy tạo pull request hoặc b
 Dự án này được phát hành dưới giấy phép MIT.
 
 ## Author
-Name: [Phúc Bảo]
-Email: [baominecraft12344@gmail.com]
+Name: Phúc Bảo
+Email: baominecraft12344@gmail.com
 
 ---
 
