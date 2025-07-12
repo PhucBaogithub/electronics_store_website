@@ -1,8 +1,8 @@
-# Electronics Store 🛒
+# Electronics Store
 
 Một ứng dụng web bán hàng điện tử được xây dựng với ASP.NET Core 9.0, Entity Framework Core và SQLite.
 
-## ✨ Tính năng chính
+## Tính năng chính
 
 - **Quản lý sản phẩm**: Thêm, sửa, xóa sản phẩm với hình ảnh
 - **Quản lý danh mục**: Phân loại sản phẩm theo danh mục
@@ -12,7 +12,7 @@ Một ứng dụng web bán hàng điện tử được xây dựng với ASP.NE
 - **Hệ thống phân quyền**: Admin và User với quyền hạn khác nhau
 - **Giao diện responsive**: Tương thích với mọi thiết bị
 
-## 🛠️ Công nghệ sử dụng
+## Công nghệ sử dụng
 
 - **Backend**: ASP.NET Core 9.0
 - **Database**: SQLite với Entity Framework Core
@@ -21,13 +21,13 @@ Một ứng dụng web bán hàng điện tử được xây dựng với ASP.NE
 - **Icons**: Font Awesome
 - **Architecture**: MVC Pattern
 
-## 📋 Yêu cầu hệ thống
+## Yêu cầu hệ thống
 
 - .NET 9.0 SDK
 - Visual Studio 2022 hoặc VS Code
 - SQLite
 
-## 🚀 Cài đặt và chạy
+## Cài đặt và chạy
 
 ### 1. Clone repository
 ```bash
@@ -52,11 +52,11 @@ dotnet run
 
 Ứng dụng sẽ chạy tại: `https://localhost:5221`
 
-## 👥 Tài khoản test
+## Tài khoản test
 
 Để sử dụng ứng dụng, bạn có thể đăng nhập bằng các tài khoản sau:
 
-### 🛡️ Tài khoản Admin
+### Tài khoản Admin
 - **Email**: `admin@electronicsstore.com`
 - **Mật khẩu**: `Admin123!`
 - **Quyền hạn**: 
@@ -67,7 +67,7 @@ dotnet run
   - Quản lý đánh giá
   - Xem dashboard thống kê
 
-### 👤 Tài khoản User
+### Tài khoản User
 - **Email**: `user@test.com`
 - **Mật khẩu**: `Test123!`
 - **Quyền hạn**:
@@ -77,7 +77,7 @@ dotnet run
   - Đánh giá sản phẩm
   - Quản lý thông tin cá nhân
 
-## 📁 Cấu trúc dự án
+## Cấu trúc dự án
 
 ```
 ElectronicsStore/
@@ -90,7 +90,7 @@ ElectronicsStore/
 └── Properties/          # Launch settings
 ```
 
-## 🖥️ Hướng dẫn sử dụng
+## Hướng dẫn sử dụng
 
 ### Cho Admin:
 1. Đăng nhập với tài khoản admin
@@ -106,14 +106,14 @@ ElectronicsStore/
 4. Thanh toán và theo dõi đơn hàng
 5. Đánh giá sản phẩm đã mua
 
-## 📊 Database Schema
+## Database Schema
 
 Ứng dụng sử dụng 13 bảng chính:
 
 - **Identity Tables**: AspNetUsers, AspNetRoles, AspNetUserRoles...
 - **Business Tables**: Products, Categories, Orders, OrderItems, CartItems, ProductReviews
 
-## 🔧 Tính năng kỹ thuật
+## Tính năng kỹ thuật
 
 - **Soft Delete**: Sản phẩm không bị xóa vĩnh viễn
 - **Image Upload**: Upload và quản lý hình ảnh sản phẩm
@@ -123,19 +123,23 @@ ElectronicsStore/
 - **Error Handling**: Xử lý lỗi toàn diện
 - **Security**: Bảo mật với ASP.NET Core Identity
 
-## 📝 Ghi chú
+## Ghi chú
 
 - Database SQLite được tạo tự động khi chạy lần đầu
 - Hình ảnh sản phẩm được lưu trong thư mục `wwwroot/images/products/`
 - Ứng dụng hỗ trợ Vietnamese locale
 
-## 🤝 Đóng góp
+## Đóng góp
 
 Mọi đóng góp đều được hoan nghênh! Hãy tạo pull request hoặc báo cáo bug.
 
-## 📄 License
+## License
 
 Dự án này được phát hành dưới giấy phép MIT.
+
+## Author
+Name: [Phúc Bảo]
+Email: [baominecraft12344@gmail.com]
 
 ---
 
