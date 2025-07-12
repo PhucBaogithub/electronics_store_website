@@ -31,7 +31,7 @@ Một ứng dụng web bán hàng điện tử được xây dựng với ASP.NE
 
 ### 1. Clone repository
 ```bash
-git clone [repository-url]
+git clone https://github.com/PhucBaogithub/electronics_store_website.git
 cd ElectronicsStore
 ```
 
