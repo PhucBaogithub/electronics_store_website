@@ -1,0 +1,255 @@
+@{
+    ViewData["Title"] = "Bảng điều khiển Admin";
+    ViewData["BodyClass"] = "admin-page";
+    var data = ViewBag.DashboardData;
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 mb-4">
+                <i class="fas fa-tachometer-alt me-2"></i>Bảng điều khiển Admin
+            </h1>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="card-title">Người dùng</h5>
+                            <h2 class="mb-0">@data.TotalUsers</h2>
+                            <small class="text-white-50">&nbsp;</small>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer mt-auto">
+                    <a href="@Url.Action("Users", "Admin")" class="text-dark text-decoration-none fw-bold">
+                        <small>Xem chi tiết <i class="fas fa-arrow-right"></i></small>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="card-title">Sản phẩm</h5>
+                            <h2 class="mb-0">@data.ActiveProducts</h2>
+                            <small class="text-white-50">Tổng cộng: @data.TotalProducts</small>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-box fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer mt-auto">
+                    <a href="@Url.Action("Products", "Admin")" class="text-dark text-decoration-none fw-bold">
+                        <small>Quản lý sản phẩm <i class="fas fa-arrow-right"></i></small>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="card-title">Đơn hàng</h5>
+                            <h2 class="mb-0">@data.PendingOrders</h2>
+                            <small class="text-white-50">Tổng cộng: @data.TotalOrders</small>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-shopping-cart fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer mt-auto">
+                    <a href="@Url.Action("Orders", "Admin")" class="text-dark text-decoration-none fw-bold">
+                        <small>Xem đơn hàng <i class="fas fa-arrow-right"></i></small>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-white h-100">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="card-title">Danh mục</h5>
+                            <h2 class="mb-0">@data.TotalCategories</h2>
+                            <small class="text-white-50">&nbsp;</small>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-list fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer mt-auto">
+                    <a href="@Url.Action("Categories", "Admin")" class="text-dark text-decoration-none fw-bold">
+                        <small>Quản lý danh mục <i class="fas fa-arrow-right"></i></small>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Second Row for Reviews -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="card-title">Đánh giá</h5>
+                            <h2 class="mb-0">@ViewBag.TotalReviews</h2>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-star fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="@Url.Action("Reviews", "Admin")" class="text-dark text-decoration-none fw-bold">
+                        <small>Quản lý đánh giá <i class="fas fa-arrow-right"></i></small>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <!-- Empty space or additional cards can be added here later -->
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Thao tác nhanh</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-2">
+                            <a href="@Url.Action("CreateProduct", "Admin")" class="btn btn-success w-100">
+                                <i class="fas fa-plus me-2"></i>Thêm sản phẩm
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="@Url.Action("CreateCategory", "Admin")" class="btn btn-primary w-100">
+                                <i class="fas fa-plus me-2"></i>Thêm danh mục
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="@Url.Action("Orders", "Admin")" class="btn btn-info w-100">
+                                <i class="fas fa-list me-2"></i>Xem đơn hàng
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="@Url.Action("Users", "Admin")" class="btn btn-warning w-100">
+                                <i class="fas fa-users me-2"></i>Quản lý users
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="@Url.Action("Reviews", "Admin")" class="btn btn-danger w-100">
+                                <i class="fas fa-star me-2"></i>Quản lý đánh giá
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alerts -->
+    @if (data.LowStockProducts > 0)
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Cảnh báo!</strong> Có @data.LowStockProducts sản phẩm sắp hết hàng (dưới 10 sản phẩm).
+                    <a href="@Url.Action("Products", "Admin")" class="alert-link">Xem ngay</a>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Recent Orders -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Đơn hàng gần đây</h5>
+                    <a href="@Url.Action("Orders", "Admin")" class="btn btn-sm btn-outline-primary">Xem tất cả</a>
+                </div>
+                <div class="card-body">
+                    @if (data.RecentOrders.Count > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Mã đơn</th>
+                                        <th>Khách hàng</th>
+                                        <th>Tổng tiền</th>
+                                        <th>Trạng thái</th>
+                                        <th>Ngày đặt</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var order in data.RecentOrders)
+                                    {
+                                        <tr>
+                                            <td><strong>#@order.Id</strong></td>
+                                            <td>@order.User.FullName</td>
+                                            <td class="text-success">@order.TotalAmount.ToString("N0") VNĐ</td>
+                                            <td>
+                                                @switch (order.Status)
+                                                {
+                                                    case OrderStatus.Pending:
+                                                        <span class="badge bg-warning">Chờ xử lý</span>
+                                                        break;
+                                                    case OrderStatus.Processing:
+                                                        <span class="badge bg-info">Đang xử lý</span>
+                                                        break;
+                                                    case OrderStatus.Shipped:
+                                                        <span class="badge bg-primary">Đã gửi</span>
+                                                        break;
+                                                    case OrderStatus.Delivered:
+                                                        <span class="badge bg-success">Đã giao</span>
+                                                        break;
+                                                    case OrderStatus.Cancelled:
+                                                        <span class="badge bg-danger">Đã hủy</span>
+                                                        break;
+                                                    default:
+                                                        <span class="badge bg-secondary">@order.Status</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center">Chưa có đơn hàng nào.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

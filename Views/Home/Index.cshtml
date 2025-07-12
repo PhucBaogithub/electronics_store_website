@@ -1,0 +1,373 @@
+@{
+    ViewData["Title"] = "Trang chủ - Electronics Store";
+    var featuredProducts = ViewBag.FeaturedProducts as List<ElectronicsStore.Models.Product>;
+}
+
+<!-- Banner Slider -->
+<div id="bannerCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="0" class="active"></button>
+        <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="2"></button>
+        <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="3"></button>
+        <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="4"></button>
+    </div>
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="https://dientuad.com/uploads/source/slider/slide-2.png" class="d-block w-100" alt="Banner 1" style="height: 400px; object-fit: cover;">
+        </div>
+        <div class="carousel-item">
+            <img src="https://img.pikbest.com/templates/20240725/sale-banner-template-decorates-the-super-booming-sale-of-phone-accessories_10681289.jpg!w700wp" class="d-block w-100" alt="Banner 2" style="height: 400px; object-fit: cover;">
+        </div>
+        <div class="carousel-item">
+            <img src="https://kholinhkien.vn/wp-content/uploads/2024/08/banner.jpg" class="d-block w-100" alt="Banner 3" style="height: 400px; object-fit: cover;">
+        </div>
+        <div class="carousel-item">
+            <img src="https://www.nova.com.vn/img/popup_banner/Banner_linhkien.jpg" class="d-block w-100" alt="Banner 4" style="height: 400px; object-fit: cover;">
+        </div>
+        <div class="carousel-item">
+            <img src="https://truonggiang.vn/wp-content/uploads/2023/01/banner-linh-kien-laptop-truonggiang.jpg" class="d-block w-100" alt="Banner 5" style="height: 400px; object-fit: cover;">
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+
+
+<section id="featured" class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center mb-5">
+                <h2 class="fw-bold">Sản phẩm nổi bật</h2>
+                <p class="text-muted">Những sản phẩm được yêu thích nhất</p>
+            </div>
+        </div>
+        <div class="row">
+            @if (featuredProducts != null && featuredProducts.Any())
+            {
+                @foreach (var product in featuredProducts)
+                {
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100 shadow-sm product-card">
+                            <a href="@Url.Action("ProductDetail", "Home", new { id = product.Id })" class="text-decoration-none">
+                                <img src="@(product.ImageUrl ?? "https://via.placeholder.com/300x200/007bff/ffffff?text=" + Uri.EscapeDataString(product.Name))" 
+                                     class="card-img-top" alt="@product.Name" style="height: 200px; object-fit: cover;">
+                            </a>
+                            <div class="card-body d-flex flex-column">
+                                <a href="@Url.Action("ProductDetail", "Home", new { id = product.Id })" class="text-decoration-none text-dark">
+                                    <h5 class="card-title">@product.Name</h5>
+                                </a>
+                                <p class="card-text text-muted small">@(string.IsNullOrEmpty(product.Description) ? "" : (product.Description.Length <= 100 ? product.Description : product.Description.Substring(0, 100) + "..."))</p>
+                                <div class="mt-auto">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="badge bg-primary">@product.Category?.Name</span>
+                                        @if (product.StockQuantity > 0)
+                                        {
+                                            <span class="badge bg-success">Còn hàng</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Hết hàng</span>
+                                        }
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        @if (product.DiscountPrice.HasValue && product.DiscountPrice < product.Price)
+                                        {
+                                            <div>
+                                                <span class="h6 text-success fw-bold">@product.DiscountPrice.Value.ToString("N0") VNĐ</span>
+                                                <small class="text-muted text-decoration-line-through ms-2">@product.Price.ToString("N0") VNĐ</small>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="h6 text-success fw-bold">@product.Price.ToString("N0") VNĐ</span>
+                                        }
+                                    </div>
+                                    <div class="d-grid gap-2">
+                                        <a href="@Url.Action("ProductDetail", "Home", new { id = product.Id })" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-eye me-2"></i>Xem chi tiết
+                                        </a>
+                                        @if (product.StockQuantity > 0)
+                                        {
+                                            <button class="btn btn-success btn-sm" onclick="quickAddToCart(@product.Id)">
+                                                <i class="fas fa-cart-plus me-2"></i>Thêm vào giỏ
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-secondary btn-sm" disabled>
+                                                <i class="fas fa-ban me-2"></i>Hết hàng
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <!-- Fallback static products if no featured products in database -->
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <img src="https://via.placeholder.com/300x200/28a745/ffffff?text=Smartphone" class="card-img-top" alt="Smartphone">
+                        <div class="card-body">
+                            <h5 class="card-title">Điện thoại thông minh</h5>
+                            <p class="card-text">Công nghệ tiên tiến, thiết kế hiện đại</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Từ 5,000,000 VNĐ</small>
+                                <a href="@Url.Action("Products", "Home")" class="btn btn-sm btn-outline-primary">Xem thêm</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <img src="https://via.placeholder.com/300x200/dc3545/ffffff?text=Laptop" class="card-img-top" alt="Laptop">
+                        <div class="card-body">
+                            <h5 class="card-title">Laptop</h5>
+                            <p class="card-text">Hiệu suất cao, phù hợp mọi nhu cầu</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Từ 15,000,000 VNĐ</small>
+                                <a href="@Url.Action("Products", "Home")" class="btn btn-sm btn-outline-primary">Xem thêm</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <img src="https://via.placeholder.com/300x200/ffc107/ffffff?text=Accessories" class="card-img-top" alt="Phụ kiện">
+                        <div class="card-body">
+                            <h5 class="card-title">Phụ kiện</h5>
+                            <p class="card-text">Hoàn thiện trải nghiệm công nghệ</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Từ 100,000 VNĐ</small>
+                                <a href="@Url.Action("Products", "Home")" class="btn btn-sm btn-outline-primary">Xem thêm</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        
+        @if (featuredProducts != null && featuredProducts.Any())
+        {
+            <div class="text-center mt-4">
+                <a href="@Url.Action("Products", "Home")" class="btn btn-primary">
+                    <i class="fas fa-th-large me-2"></i>Xem tất cả sản phẩm
+                </a>
+            </div>
+        }
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center mb-5">
+                <h2 class="fw-bold">Tại sao chọn chúng tôi?</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 text-center mb-4">
+                <div class="mb-3">
+                    <i class="fas fa-shipping-fast fa-3x text-primary"></i>
+                </div>
+                <h4>Giao hàng nhanh chóng</h4>
+                <p class="text-muted">Giao hàng miễn phí cho đơn hàng trên 1,000,000 VNĐ</p>
+            </div>
+            <div class="col-md-4 text-center mb-4">
+                <div class="mb-3">
+                    <i class="fas fa-shield-alt fa-3x text-primary"></i>
+                </div>
+                <h4>Bảo hành chính hãng</h4>
+                <p class="text-muted">Cam kết sản phẩm chính hãng, bảo hành đầy đủ</p>
+            </div>
+            <div class="col-md-4 text-center mb-4">
+                <div class="mb-3">
+                    <i class="fas fa-headset fa-3x text-primary"></i>
+                </div>
+                <h4>Hỗ trợ 24/7</h4>
+                <p class="text-muted">Đội ngũ chăm sóc khách hàng chuyên nghiệp</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <style>
+        .hero-section {
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        }
+        
+        .bg-gradient-success {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%) !important;
+        }
+        
+        .bg-gradient-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%) !important;
+        }
+        
+
+    </style>
+    <script>
+
+
+        async function quickAddToCart(productId) {
+            try {
+                const formData = new FormData();
+                formData.append('productId', productId);
+                formData.append('quantity', 1);
+
+                const response = await fetch('/Cart/AddToCart', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'  // Include cookies for authentication
+                });
+
+                // Check if response is a redirect to login
+                if (response.redirected && response.url.includes('/Account/Login')) {
+                    showLoginPrompt();
+                    return;
+                }
+
+                if (response.ok) {
+                    showSuccess('Đã thêm sản phẩm vào giỏ hàng!');
+                    if (window.updateCartCount) {
+                        window.updateCartCount();
+                    }
+                } else if (response.status === 401 || response.status === 302) {
+                    showLoginPrompt();
+                } else {
+                    try {
+                        const errorText = await response.text();
+                        showError(errorText || 'Có lỗi xảy ra');
+                    } catch {
+                        showError('Có lỗi xảy ra');
+                    }
+                }
+            } catch (error) {
+                console.error('Error adding to cart:', error);
+                showError('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng');
+            }
+        }
+
+        function showLoginPrompt() {
+            const modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.innerHTML = `
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-warning text-dark">
+                            <h5 class="modal-title">
+                                <i class="fas fa-sign-in-alt me-2"></i>Yêu cầu đăng nhập
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <i class="fas fa-user-lock fa-3x text-warning mb-3"></i>
+                            <h5>Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng</h5>
+                            <p class="text-muted">Vui lòng đăng nhập để tiếp tục mua sắm</p>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <a href="/Account/Login?returnUrl=${encodeURIComponent(window.location.href)}" 
+                               class="btn btn-primary">
+                                <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                            </a>
+                            <a href="/Account/Register?returnUrl=${encodeURIComponent(window.location.href)}" 
+                               class="btn btn-outline-primary">
+                                <i class="fas fa-user-plus me-2"></i>Đăng ký
+                            </a>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-2"></i>Đóng
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            const bsModal = new bootstrap.Modal(modal);
+            bsModal.show();
+            
+            modal.addEventListener('hidden.bs.modal', () => {
+                modal.remove();
+            });
+        }
+
+        function showSuccess(message) {
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success alert-dismissible fade show position-fixed';
+            alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alert);
+            
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 3000);
+        }
+
+        function showError(message) {
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-danger alert-dismissible fade show position-fixed';
+            alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alert);
+            
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+    </script>
+}
+
+<style>
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 100px 0;
+}
+
+.product-card {
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+}
+
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.btn {
+    transition: all 0.3s ease;
+}
+</style> 

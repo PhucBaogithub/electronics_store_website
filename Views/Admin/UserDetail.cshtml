@@ -1,0 +1,207 @@
+@model ElectronicsStore.Models.User
+
+@{
+    ViewData["Title"] = "Chi tiết người dùng";
+    ViewData["BodyClass"] = "admin-page";
+    var userRoles = ViewBag.UserRoles as IList<string>;
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="text-dark"><i class="fas fa-user me-2"></i>Chi tiết người dùng</h2>
+                <a href="@Url.Action("Users", "Admin")" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách
+                </a>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Thông tin cá nhân</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">ID:</label>
+                                <p class="text-muted">@Model.Id</p>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Tên đăng nhập:</label>
+                                <p>@Model.UserName</p>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Email:</label>
+                                <p>@Model.Email</p>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Họ và tên:</label>
+                                <p>@(Model.FirstName + " " + Model.LastName)</p>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Số điện thoại:</label>
+                                <p>@(string.IsNullOrEmpty(Model.PhoneNumber) ? "Chưa cập nhật" : Model.PhoneNumber)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">Trạng thái tài khoản</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Vai trò:</label>
+                                <div>
+                                    @if (userRoles != null && userRoles.Any())
+                                    {
+                                        @foreach (var role in userRoles)
+                                        {
+                                            <span class="badge bg-info me-1">@role</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">User</span>
+                                    }
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Trạng thái:</label>
+                                <p>
+                                    @if (Model.IsActive)
+                                    {
+                                        <span class="badge bg-success">Hoạt động</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Không hoạt động</span>
+                                    }
+                                </p>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Email đã xác thực:</label>
+                                <p>
+                                    @if (Model.EmailConfirmed)
+                                    {
+                                        <span class="badge bg-success">Đã xác thực</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning">Chưa xác thực</span>
+                                    }
+                                </p>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Số điện thoại đã xác thực:</label>
+                                <p>
+                                    @if (Model.PhoneNumberConfirmed)
+                                    {
+                                        <span class="badge bg-success">Đã xác thực</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning">Chưa xác thực</span>
+                                    }
+                                </p>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Ngày tạo:</label>
+                                <p>@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                            </div>
+                            
+                            @if (Model.LockoutEnd.HasValue && Model.LockoutEnd > DateTime.UtcNow)
+                            {
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Khóa đến:</label>
+                                    <p class="text-danger">@Model.LockoutEnd.Value.ToString("dd/MM/yyyy HH:mm")</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-secondary text-white">
+                            <h5 class="mb-0">Thao tác quản lý</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex gap-2">
+                                @if (userRoles != null && !userRoles.Contains("Admin"))
+                                {
+                                    <button type="button" class="btn btn-warning" onclick="toggleUserStatus('@Model.Id')">
+                                        <i class="fas fa-toggle-@(Model.IsActive ? "off" : "on") me-2"></i>
+                                        @(Model.IsActive ? "Vô hiệu hóa" : "Kích hoạt") tài khoản
+                                    </button>
+                                    
+                                    @if (!Model.EmailConfirmed)
+                                    {
+                                        <button type="button" class="btn btn-info">
+                                            <i class="fas fa-envelope me-2"></i>Gửi email xác thực
+                                        </button>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="alert alert-info mb-0">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        Không thể thay đổi trạng thái tài khoản Admin
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleUserStatus(userId) {
+            const isActive = @Model.IsActive.ToString().ToLower();
+            const action = isActive ? 'vô hiệu hóa' : 'kích hoạt';
+            
+            if (confirm('Bạn có chắc chắn muốn ' + action + ' tài khoản này?')) {
+                fetch('/Admin/ToggleUserStatus', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                    },
+                    body: JSON.stringify({
+                        id: userId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Cập nhật trạng thái thành công!');
+                        location.reload();
+                    } else {
+                        alert('Lỗi: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra khi cập nhật trạng thái');
+                });
+            }
+        }
+    </script>
+} 

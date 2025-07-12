@@ -1,0 +1,894 @@
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+    int productId = ViewBag.ProductId ?? 0;
+}
+
+<div class="page-content">
+<div class="container py-4">
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+                        <li class="breadcrumb-item"><a href="@Url.Action("Products", "Home")">Sản phẩm</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Chi tiết sản phẩm</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+        <div id="productDetail" class="row">
+            <div class="col-12 text-center">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Đang tải...</span>
+                </div>
+                <p>Đang tải thông tin sản phẩm...</p>
+            </div>
+        </div>
+        
+        <!-- Product Reviews Section -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">
+                            <i class="fas fa-star text-warning me-2"></i>Đánh giá sản phẩm
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="reviewsSection">
+                            <div class="text-center">
+                                <div class="spinner-border" role="status">
+                                    <span class="visually-hidden">Đang tải đánh giá...</span>
+                                </div>
+                                <p>Đang tải đánh giá...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <style>
+        .star-rating-input {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            gap: 5px;
+        }
+
+        .star-rating-input input[type="radio"] {
+            display: none;
+        }
+
+        .star-rating-input label {
+            cursor: pointer;
+            color: #ddd;
+            font-size: 1.2em;
+            transition: color 0.2s;
+        }
+
+        .star-rating-input label.active,
+        .star-rating-input label.hover {
+            color: #ffc107 !important;
+        }
+
+        .rating-bar {
+            display: flex;
+            align-items: center;
+            font-size: 0.9em;
+        }
+
+        .rating-label {
+            width: 50px;
+            text-align: right;
+        }
+
+        .rating-count {
+            width: 30px;
+            text-align: left;
+        }
+
+        .review-item:last-child {
+            border-bottom: none !important;
+        }
+
+        .star-rating i {
+            font-size: 0.9em;
+        }
+
+        /* Hide spinner arrows in number input */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+    </style>
+    <script>
+        const productId = @productId;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProductDetail();
+            loadProductReviews();
+            
+            // Check if we should scroll to reviews
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('review') === 'true') {
+                setTimeout(() => {
+                    const reviewsSection = document.querySelector('#reviewsSection');
+                    if (reviewsSection) {
+                        reviewsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 1000); // Wait a bit for content to load
+            }
+        });
+
+        async function loadProductDetail() {
+            if (!productId) {
+                showError('Không tìm thấy sản phẩm');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/products/${productId}`);
+                if (response.ok) {
+                    const product = await response.json();
+                    displayProduct(product);
+                } else {
+                    showError('Không tìm thấy sản phẩm');
+                }
+            } catch (error) {
+                console.error('Error loading product:', error);
+                showError('Có lỗi xảy ra khi tải sản phẩm');
+            }
+        }
+
+        function displayProduct(product) {
+            const container = document.getElementById('productDetail');
+            
+            const discountBadge = product.hasDiscount ? 
+                `<span class="badge bg-danger position-absolute top-0 end-0 m-2">
+                    -${Math.round(((product.price - product.finalPrice) / product.price) * 100)}%
+                </span>` : '';
+
+            const stockStatus = product.isInStock ? 
+                '<span class="badge bg-success">Còn hàng</span>' : 
+                '<span class="badge bg-danger">Hết hàng</span>';
+
+            const priceDisplay = product.hasDiscount ? 
+                `<div class="mb-3">
+                    <span class="h4 text-success me-2">${product.finalPrice.toLocaleString()} VNĐ</span>
+                    <span class="text-muted text-decoration-line-through">${product.price.toLocaleString()} VNĐ</span>
+                </div>` :
+                `<div class="mb-3">
+                    <span class="h4 text-success">${product.price.toLocaleString()} VNĐ</span>
+                </div>`;
+
+            container.innerHTML = `
+                <div class="col-md-6">
+                    <div class="position-relative">
+                        <img src="${product.imageUrl || 'https://via.placeholder.com/500x500/007bff/ffffff?text=' + encodeURIComponent(product.name)}" 
+                             class="img-fluid rounded shadow" alt="${product.name}">
+                        ${discountBadge}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="ps-md-4">
+                        <h1 class="h2 mb-3">${product.name}</h1>
+                        
+                        <div class="mb-3">
+                            <span class="badge bg-primary me-2">${product.categoryName}</span>
+                            ${stockStatus}
+                        </div>
+
+                        ${priceDisplay}
+
+                        <div class="mb-4">
+                            <h5>Mô tả sản phẩm</h5>
+                            <p class="text-muted">${product.description || 'Chưa có mô tả chi tiết'}</p>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <strong>Thương hiệu:</strong> ${product.brand || 'N/A'}
+                            </div>
+                            <div class="col-6">
+                                <strong>Model:</strong> ${product.model || 'N/A'}
+                            </div>
+                            <div class="col-6 mt-2">
+                                <strong>Tồn kho:</strong> ${product.stockQuantity} sản phẩm
+                            </div>
+                        </div>
+
+                        ${product.isInStock ? `
+                            <div class="row align-items-center mb-4">
+                                <div class="col-md-4">
+                                    <label for="quantity" class="form-label">Số lượng:</label>
+                                    <div class="input-group">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(-1)">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <input type="number" class="form-control text-center" id="quantity" value="1" min="1" max="${product.stockQuantity}">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(1)">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <button class="btn btn-success btn-lg w-100" onclick="addToCart()">
+                                        <i class="fas fa-cart-plus me-2"></i>Thêm vào giỏ hàng
+                                    </button>
+                                </div>
+                            </div>
+                        ` : `
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Sản phẩm hiện đang hết hàng
+                            </div>
+                        `}
+
+                        <div class="d-flex gap-2">
+                            <a href="@Url.Action("Products", "Home")" class="btn btn-outline-primary">
+                                <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách
+                            </a>
+                            <button class="btn btn-outline-secondary" onclick="shareProduct()">
+                                <i class="fas fa-share me-2"></i>Chia sẻ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function changeQuantity(change) {
+            const input = document.getElementById('quantity');
+            if (!input) return;
+            
+            const currentValue = parseInt(input.value);
+            const newValue = currentValue + change;
+            const max = parseInt(input.getAttribute('max'));
+            
+            if (newValue >= 1 && newValue <= max) {
+                input.value = newValue;
+            }
+        }
+
+        async function addToCart() {
+            const quantityInput = document.getElementById('quantity');
+            if (!quantityInput) return;
+            
+            const quantity = parseInt(quantityInput.value);
+            
+            try {
+                const formData = new FormData();
+                formData.append('productId', productId);
+                formData.append('quantity', quantity);
+
+                const response = await fetch('/Cart/AddToCart', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'  // Include cookies for authentication
+                });
+
+                // Check if response is a redirect to login
+                if (response.redirected && response.url.includes('/Account/Login')) {
+                    showLoginPrompt();
+                return;
+            }
+
+                if (response.ok) {
+                    showSuccess('Đã thêm sản phẩm vào giỏ hàng thành công!');
+                    if (window.updateCartCount) {
+                        window.updateCartCount();
+                    }
+                    
+                    // Redirect to cart page after 1.5 seconds
+                    setTimeout(() => {
+                        window.location.href = '/Cart';
+                    }, 1500);
+                } else if (response.status === 401 || response.status === 302) {
+                    // Show login prompt
+                    showLoginPrompt();
+                } else {
+                    try {
+                        const errorText = await response.text();
+                        showError(errorText || 'Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng');
+                    } catch {
+                        showError('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng');
+                    }
+                }
+            } catch (error) {
+                console.error('Error adding to cart:', error);
+                showError('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng');
+            }
+        }
+
+        function showLoginPrompt() {
+            // Create and show login prompt modal
+            const modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.id = 'loginPromptModal';
+            modal.innerHTML = `
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-warning text-dark">
+                            <h5 class="modal-title">
+                                <i class="fas fa-sign-in-alt me-2"></i>Yêu cầu đăng nhập
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <i class="fas fa-user-lock fa-3x text-warning mb-3"></i>
+                            <h5>Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng</h5>
+                            <p class="text-muted">Vui lòng đăng nhập để tiếp tục mua sắm</p>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <a href="/Account/Login?returnUrl=${encodeURIComponent(window.location.href)}" 
+                               class="btn btn-primary">
+                                <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                            </a>
+                            <a href="/Account/Register?returnUrl=${encodeURIComponent(window.location.href)}" 
+                               class="btn btn-outline-primary">
+                                <i class="fas fa-user-plus me-2"></i>Đăng ký
+                            </a>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-2"></i>Đóng
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Show modal using Bootstrap
+            const bsModal = new bootstrap.Modal(modal);
+            bsModal.show();
+            
+            // Remove modal from DOM when hidden
+            modal.addEventListener('hidden.bs.modal', () => {
+                modal.remove();
+            });
+        }
+
+        function shareProduct() {
+            if (navigator.share) {
+                navigator.share({
+                    title: document.title,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback: copy URL to clipboard
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    showSuccess('Đã sao chép liên kết sản phẩm!');
+                });
+            }
+        }
+
+        function showError(message) {
+            // Create and show error alert
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-danger alert-dismissible fade show position-fixed';
+            alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alert);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            // Create and show success alert
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success alert-dismissible fade show position-fixed';
+            alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alert);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 3000);
+        }
+
+        // Reviews functions
+        async function loadProductReviews() {
+            if (!productId) return;
+            
+            try {
+                const response = await fetch(`/api/review/product/${productId}`);
+                if (response.ok) {
+                    const reviewData = await response.json();
+                    displayReviews(reviewData);
+                } else {
+                    console.error('Error loading reviews:', response.status);
+                    document.getElementById('reviewsSection').innerHTML = '<p>Không thể tải đánh giá</p>';
+                }
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+                document.getElementById('reviewsSection').innerHTML = '<p>Không thể tải đánh giá</p>';
+            }
+        }
+
+        function displayReviews(reviewData) {
+            const reviewsSection = document.getElementById('reviewsSection');
+            const { summary, reviews, canReview, userReview } = reviewData;
+            
+            let html = `
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="review-summary bg-light p-3 rounded">
+                            <h5 class="mb-3">Tổng quan đánh giá</h5>
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="display-6 fw-bold me-2">${summary.averageRating.toFixed(1)}</span>
+                                <div>
+                                    <div class="star-rating">
+                                        ${generateStars(summary.averageRating)}
+                                    </div>
+                                    <small class="text-muted">${summary.totalReviews} đánh giá</small>
+                                </div>
+                            </div>
+                            <div class="rating-breakdown">
+                                ${generateRatingBreakdown(summary)}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        ${canReview ? generateReviewForm(userReview) : ''}
+                        <div class="reviews-list">
+                            ${reviews.length > 0 ? reviews.map(review => generateReviewItem(review)).join('') : '<p class="text-muted">Chưa có đánh giá nào</p>'}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            reviewsSection.innerHTML = html;
+            
+            // Initialize star rating functionality
+            initializeStarRating();
+        }
+
+        function generateStars(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 !== 0;
+            const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+            
+            let stars = '';
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<i class="fas fa-star text-warning"></i>';
+            }
+            if (hasHalfStar) {
+                stars += '<i class="fas fa-star-half-alt text-warning"></i>';
+            }
+            for (let i = 0; i < emptyStars; i++) {
+                stars += '<i class="far fa-star text-muted"></i>';
+            }
+            return stars;
+        }
+
+        function generateRatingBreakdown(summary) {
+            const total = summary.totalReviews;
+            if (total === 0) return '<p class="text-muted">Chưa có đánh giá</p>';
+            
+            return `
+                <div class="rating-bar mb-1">
+                    <span class="rating-label">5 sao</span>
+                    <div class="progress mx-2" style="height: 10px;">
+                        <div class="progress-bar bg-warning" style="width: ${(summary.rating5Count / total * 100)}%"></div>
+                    </div>
+                    <span class="rating-count">${summary.rating5Count}</span>
+                </div>
+                <div class="rating-bar mb-1">
+                    <span class="rating-label">4 sao</span>
+                    <div class="progress mx-2" style="height: 10px;">
+                        <div class="progress-bar bg-warning" style="width: ${(summary.rating4Count / total * 100)}%"></div>
+                    </div>
+                    <span class="rating-count">${summary.rating4Count}</span>
+                </div>
+                <div class="rating-bar mb-1">
+                    <span class="rating-label">3 sao</span>
+                    <div class="progress mx-2" style="height: 10px;">
+                        <div class="progress-bar bg-warning" style="width: ${(summary.rating3Count / total * 100)}%"></div>
+                    </div>
+                    <span class="rating-count">${summary.rating3Count}</span>
+                </div>
+                <div class="rating-bar mb-1">
+                    <span class="rating-label">2 sao</span>
+                    <div class="progress mx-2" style="height: 10px;">
+                        <div class="progress-bar bg-warning" style="width: ${(summary.rating2Count / total * 100)}%"></div>
+                    </div>
+                    <span class="rating-count">${summary.rating2Count}</span>
+                </div>
+                <div class="rating-bar">
+                    <span class="rating-label">1 sao</span>
+                    <div class="progress mx-2" style="height: 10px;">
+                        <div class="progress-bar bg-warning" style="width: ${(summary.rating1Count / total * 100)}%"></div>
+                    </div>
+                    <span class="rating-count">${summary.rating1Count}</span>
+                </div>
+            `;
+        }
+
+        function generateReviewForm(userReview) {
+            if (userReview) {
+                return `
+                    <div class="user-review bg-info bg-opacity-10 p-3 rounded mb-3">
+                        <h6><i class="fas fa-user me-2"></i>Đánh giá của bạn</h6>
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="star-rating me-2">
+                                ${generateStars(userReview.rating)}
+                            </div>
+                            <small class="text-muted">${new Date(userReview.createdAt).toLocaleDateString('vi-VN')}</small>
+                        </div>
+                        <p class="mb-2">${userReview.comment || 'Không có nhận xét'}</p>
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-outline-primary" onclick="editReview(${userReview.id})">
+                                <i class="fas fa-edit me-1"></i>Chỉnh sửa
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteReview(${userReview.id})">
+                                <i class="fas fa-trash me-1"></i>Xóa
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="review-form bg-light p-3 rounded mb-3">
+                        <h6><i class="fas fa-plus me-2"></i>Viết đánh giá</h6>
+                        <form id="reviewForm" onsubmit="submitReview(event)">
+                            <div class="mb-3">
+                                <label class="form-label">Xếp hạng</label>
+                                <div class="star-rating-input" id="starRatingInput">
+                                    <input type="radio" name="rating" value="1" id="star1" required>
+                                    <label for="star1" data-rating="1"><i class="fas fa-star"></i></label>
+                                    <input type="radio" name="rating" value="2" id="star2">
+                                    <label for="star2" data-rating="2"><i class="fas fa-star"></i></label>
+                                    <input type="radio" name="rating" value="3" id="star3">
+                                    <label for="star3" data-rating="3"><i class="fas fa-star"></i></label>
+                                    <input type="radio" name="rating" value="4" id="star4">
+                                    <label for="star4" data-rating="4"><i class="fas fa-star"></i></label>
+                                    <input type="radio" name="rating" value="5" id="star5">
+                                    <label for="star5" data-rating="5"><i class="fas fa-star"></i></label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="comment" class="form-label">Nhận xét (tùy chọn)</label>
+                                <textarea class="form-control" id="comment" rows="3" maxlength="1000" placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-2"></i>Gửi đánh giá
+                            </button>
+                        </form>
+                    </div>
+                `;
+            }
+        }
+
+        function initializeStarRating() {
+            const starRatingInput = document.getElementById('starRatingInput');
+            if (!starRatingInput) return;
+            
+            const labels = starRatingInput.querySelectorAll('label');
+            const inputs = starRatingInput.querySelectorAll('input[name="rating"]');
+            
+            labels.forEach((label, index) => {
+                // Handle click
+                label.addEventListener('click', function() {
+                    const rating = parseInt(this.getAttribute('data-rating'));
+                    updateStarDisplay(rating);
+                    
+                    // Check the corresponding radio button
+                    const radio = document.getElementById(`star${rating}`);
+                    if (radio) {
+                        radio.checked = true;
+                    }
+                });
+                
+                // Handle hover
+                label.addEventListener('mouseenter', function() {
+                    const rating = parseInt(this.getAttribute('data-rating'));
+                    updateStarDisplay(rating, true);
+                });
+                
+                // Handle mouse leave
+                starRatingInput.addEventListener('mouseleave', function() {
+                    const checkedInput = starRatingInput.querySelector('input[name="rating"]:checked');
+                    const rating = checkedInput ? parseInt(checkedInput.value) : 0;
+                    updateStarDisplay(rating);
+                });
+            });
+        }
+        
+        function updateStarDisplay(rating, isHover = false) {
+            const starRatingInput = document.getElementById('starRatingInput');
+            if (!starRatingInput) return;
+            
+            const labels = starRatingInput.querySelectorAll('label');
+            
+            labels.forEach((label, index) => {
+                const starRating = parseInt(label.getAttribute('data-rating'));
+                
+                // Remove all classes
+                label.classList.remove('active', 'hover');
+                
+                if (starRating <= rating) {
+                    if (isHover) {
+                        label.classList.add('hover');
+                    } else {
+                        label.classList.add('active');
+                    }
+                }
+            });
+        }
+
+        function generateReviewItem(review) {
+            return `
+                <div class="review-item border-bottom pb-3 mb-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <strong class="me-2">${review.userFullName}</strong>
+                        <div class="star-rating me-2">
+                            ${generateStars(review.rating)}
+                        </div>
+                        <small class="text-muted">${new Date(review.createdAt).toLocaleDateString('vi-VN')}</small>
+                    </div>
+                    <p class="mb-0">${review.comment || 'Không có nhận xét'}</p>
+                </div>
+            `;
+        }
+
+        async function submitReview(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const rating = form.rating.value;
+            const comment = form.comment.value;
+            
+            try {
+                const response = await fetch('/api/review', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        productId: productId,
+                        rating: parseInt(rating),
+                        comment: comment
+                    }),
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    showSuccess('Đánh giá đã được gửi thành công!');
+                    loadProductReviews(); // Reload reviews
+                } else if (response.status === 401) {
+                    showLoginPrompt();
+                } else {
+                    const errorText = await response.text();
+                    showError(errorText || 'Không thể gửi đánh giá');
+                }
+            } catch (error) {
+                console.error('Error submitting review:', error);
+                showError('Có lỗi xảy ra khi gửi đánh giá');
+            }
+        }
+
+        async function editReview(reviewId) {
+            try {
+                // Get current review data
+                const response = await fetch(`/api/review/${reviewId}`, {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    showError('Không thể lấy thông tin đánh giá');
+                    return;
+                }
+                
+                const review = await response.json();
+                
+                // Create edit form modal
+                const modal = document.createElement('div');
+                modal.className = 'modal fade';
+                modal.id = 'editReviewModal';
+                modal.innerHTML = `
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">
+                                    <i class="fas fa-edit me-2"></i>Chỉnh sửa đánh giá
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="editReviewForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">Xếp hạng</label>
+                                        <div class="star-rating-input" id="editStarRatingInput">
+                                            <input type="radio" name="editRating" value="1" id="editStar1" ${review.rating === 1 ? 'checked' : ''} required>
+                                            <label for="editStar1" data-rating="1"><i class="fas fa-star"></i></label>
+                                            <input type="radio" name="editRating" value="2" id="editStar2" ${review.rating === 2 ? 'checked' : ''}>
+                                            <label for="editStar2" data-rating="2"><i class="fas fa-star"></i></label>
+                                            <input type="radio" name="editRating" value="3" id="editStar3" ${review.rating === 3 ? 'checked' : ''}>
+                                            <label for="editStar3" data-rating="3"><i class="fas fa-star"></i></label>
+                                            <input type="radio" name="editRating" value="4" id="editStar4" ${review.rating === 4 ? 'checked' : ''}>
+                                            <label for="editStar4" data-rating="4"><i class="fas fa-star"></i></label>
+                                            <input type="radio" name="editRating" value="5" id="editStar5" ${review.rating === 5 ? 'checked' : ''}>
+                                            <label for="editStar5" data-rating="5"><i class="fas fa-star"></i></label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editComment" class="form-label">Nhận xét (tùy chọn)</label>
+                                        <textarea class="form-control" id="editComment" rows="3" maxlength="1000" placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm...">${review.comment || ''}</textarea>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    <i class="fas fa-times me-2"></i>Hủy
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="updateReview(${reviewId})">
+                                    <i class="fas fa-save me-2"></i>Cập nhật
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                // Show modal
+                const bsModal = new bootstrap.Modal(modal);
+                bsModal.show();
+                
+                // Initialize star rating for edit form
+                initializeEditStarRating(review.rating);
+                
+                // Remove modal when hidden
+                modal.addEventListener('hidden.bs.modal', () => {
+                    modal.remove();
+                });
+                
+            } catch (error) {
+                console.error('Error editing review:', error);
+                showError('Có lỗi xảy ra khi chỉnh sửa đánh giá');
+            }
+        }
+        
+        function initializeEditStarRating(currentRating) {
+            const starRatingInput = document.getElementById('editStarRatingInput');
+            if (!starRatingInput) return;
+            
+            const labels = starRatingInput.querySelectorAll('label');
+            
+            // Set initial display
+            updateEditStarDisplay(currentRating);
+            
+            labels.forEach((label, index) => {
+                // Handle click
+                label.addEventListener('click', function() {
+                    const rating = parseInt(this.getAttribute('data-rating'));
+                    updateEditStarDisplay(rating);
+                    
+                    // Check the corresponding radio button
+                    const radio = document.getElementById(`editStar${rating}`);
+                    if (radio) {
+                        radio.checked = true;
+                    }
+                });
+                
+                // Handle hover
+                label.addEventListener('mouseenter', function() {
+                    const rating = parseInt(this.getAttribute('data-rating'));
+                    updateEditStarDisplay(rating, true);
+                });
+                
+                // Handle mouse leave
+                starRatingInput.addEventListener('mouseleave', function() {
+                    const checkedInput = starRatingInput.querySelector('input[name="editRating"]:checked');
+                    const rating = checkedInput ? parseInt(checkedInput.value) : 0;
+                    updateEditStarDisplay(rating);
+                });
+            });
+        }
+        
+        function updateEditStarDisplay(rating, isHover = false) {
+            const starRatingInput = document.getElementById('editStarRatingInput');
+            if (!starRatingInput) return;
+            
+            const labels = starRatingInput.querySelectorAll('label');
+            
+            labels.forEach((label, index) => {
+                const starRating = parseInt(label.getAttribute('data-rating'));
+                
+                // Remove all classes
+                label.classList.remove('active', 'hover');
+                
+                if (starRating <= rating) {
+                    if (isHover) {
+                        label.classList.add('hover');
+                    } else {
+                        label.classList.add('active');
+                    }
+                }
+            });
+        }
+        
+        async function updateReview(reviewId) {
+            const form = document.getElementById('editReviewForm');
+            const rating = form.editRating.value;
+            const comment = form.editComment.value;
+            
+            try {
+                const response = await fetch(`/api/review/${reviewId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        rating: parseInt(rating),
+                        comment: comment
+                    }),
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    showSuccess('Đánh giá đã được cập nhật thành công!');
+                    
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editReviewModal'));
+                    modal.hide();
+                    
+                    // Reload reviews
+                    loadProductReviews();
+                } else {
+                    const errorText = await response.text();
+                    showError(errorText || 'Không thể cập nhật đánh giá');
+                }
+            } catch (error) {
+                console.error('Error updating review:', error);
+                showError('Có lỗi xảy ra khi cập nhật đánh giá');
+            }
+        }
+
+        async function deleteReview(reviewId) {
+            if (!confirm('Bạn có chắc chắn muốn xóa đánh giá này?')) return;
+            
+            try {
+                const response = await fetch(`/api/review/${reviewId}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    showSuccess('Đánh giá đã được xóa thành công!');
+                    loadProductReviews(); // Reload reviews
+                } else {
+                    const errorText = await response.text();
+                    showError(errorText || 'Không thể xóa đánh giá');
+                }
+            } catch (error) {
+                console.error('Error deleting review:', error);
+                showError('Có lỗi xảy ra khi xóa đánh giá');
+            }
+        }
+    </script>
+} 

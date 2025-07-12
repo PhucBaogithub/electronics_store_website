@@ -1,0 +1,169 @@
+@model List<ElectronicsStore.Models.CartItem>
+@{
+    ViewData["Title"] = "Giỏ hàng";
+    decimal totalAmount = Model.Sum(item => item.Price * item.Quantity);
+}
+
+<div class="page-content">
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="fas fa-shopping-cart me-2"></i>Giỏ hàng của bạn</h2>
+                    <a href="@Url.Action("Products", "Home")" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Tiếp tục mua sắm
+                    </a>
+                </div>
+
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show">
+                        @TempData["Success"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        @TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                @if (Model.Count == 0)
+                {
+                    <div class="text-center py-5">
+                        <i class="fas fa-shopping-cart fa-5x text-muted mb-3"></i>
+                        <h4>Giỏ hàng của bạn đang trống</h4>
+                        <p class="text-muted">Hãy thêm một số sản phẩm vào giỏ hàng để tiếp tục mua sắm</p>
+                        <a href="@Url.Action("Products", "Home")" class="btn btn-primary">
+                            <i class="fas fa-shopping-bag me-2"></i>Tiếp tục mua sắm
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="row">
+                        <div class="col-md-8">
+                            @foreach (var item in Model)
+                            {
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-2">
+                                                <img src="@(item.Product.ImageUrl ?? "https://via.placeholder.com/150x150/007bff/ffffff?text=Product")" 
+                                                     class="img-fluid rounded" alt="@item.Product.Name">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h5 class="card-title">@item.Product.Name</h5>
+                                                <p class="text-muted small">@item.Product.Description</p>
+                                                <p class="text-success">
+                                                    <strong>@item.Price.ToString("N0") VNĐ</strong>
+                                                </p>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <form method="post" action="@Url.Action("UpdateQuantity", "Cart")" class="d-inline">
+                                                    <input type="hidden" name="cartItemId" value="@item.Id" />
+                                                    <div class="input-group input-group-sm">
+                                                        <button type="button" class="btn btn-outline-secondary" onclick="changeQuantity(@item.Id, -1)">
+                                                            <i class="fas fa-minus"></i>
+                                                        </button>
+                                                        <input type="number" class="form-control text-center" 
+                                                               name="quantity" id="quantity-@item.Id" 
+                                                               value="@item.Quantity" min="1" max="@item.Product.StockQuantity">
+                                                        <button type="button" class="btn btn-outline-secondary" onclick="changeQuantity(@item.Id, 1)">
+                                                            <i class="fas fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-sm btn-primary mt-2 w-100">
+                                                        <i class="fas fa-sync-alt me-1"></i>Cập nhật
+                                                    </button>
+                                                </form>
+                                            </div>
+                                            <div class="col-md-3 text-end">
+                                                <p class="h5 text-success mb-2">
+                                                    @((item.Price * item.Quantity).ToString("N0")) VNĐ
+                                                </p>
+                                                <form method="post" action="@Url.Action("RemoveFromCart", "Cart")" class="d-inline">
+                                                    <input type="hidden" name="cartItemId" value="@item.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                            onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">
+                                                        <i class="fas fa-trash me-1"></i>Xóa
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-calculator me-2"></i>Tổng đơn hàng</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Tạm tính:</span>
+                                        <span>@totalAmount.ToString("N0") VNĐ</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Phí vận chuyển:</span>
+                                        <span class="text-success">Miễn phí</span>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between mb-3">
+                                        <strong>Tổng cộng:</strong>
+                                        <strong class="text-success">@totalAmount.ToString("N0") VNĐ</strong>
+                                    </div>
+                                    <a href="@Url.Action("Checkout", "Home")" class="btn btn-success w-100 mb-2">
+                                        <i class="fas fa-credit-card me-2"></i>Thanh toán
+                                    </a>
+                                    <a href="@Url.Action("Products", "Home")" class="btn btn-outline-primary w-100">
+                                        <i class="fas fa-shopping-bag me-2"></i>Tiếp tục mua sắm
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function changeQuantity(cartItemId, change) {
+            const input = document.getElementById('quantity-' + cartItemId);
+            const currentValue = parseInt(input.value);
+            const newValue = currentValue + change;
+            const max = parseInt(input.getAttribute('max'));
+            
+            if (newValue >= 1 && newValue <= max) {
+                input.value = newValue;
+            }
+        }
+
+        // Update cart count on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartCount();
+        });
+
+        async function updateCartCount() {
+            try {
+                const response = await fetch('@Url.Action("GetCartCount", "Cart")');
+                const data = await response.json();
+                const cartCountElement = document.getElementById('cartCount');
+                if (cartCountElement) {
+                    cartCountElement.textContent = data.count || 0;
+                    cartCountElement.style.display = data.count > 0 ? 'inline' : 'none';
+                }
+            } catch (error) {
+                console.log('Error updating cart count:', error);
+            }
+        }
+    </script>
+} 

@@ -1,0 +1,34 @@
+@model ErrorViewModel
+@{
+    ViewData["Title"] = "Lỗi";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fas fa-exclamation-triangle text-warning fa-5x mb-3"></i>
+                    <h1 class="display-4">Oops!</h1>
+                    <p class="lead">Đã xảy ra lỗi khi xử lý yêu cầu của bạn.</p>
+                    
+                    @if (Model?.ShowRequestId == true)
+                    {
+                        <p class="text-muted">
+                            <strong>Request ID:</strong> @Model.RequestId
+                        </p>
+                    }
+                    
+                    <div class="mt-4">
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-primary">
+                            <i class="fas fa-home me-2"></i>Quay về trang chủ
+                        </a>
+                        <button onclick="history.back()" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Quay lại
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

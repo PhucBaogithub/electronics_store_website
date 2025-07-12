@@ -1,0 +1,137 @@
+@model List<(ElectronicsStore.Models.User User, IList<string> Roles)>
+
+@{
+    ViewData["Title"] = "Quản lý người dùng";
+    ViewData["BodyClass"] = "admin-page";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="text-dark"><i class="fas fa-users me-2"></i>Quản lý người dùng</h2>
+                <a href="@Url.Action("Index", "Admin")" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Quay lại Dashboard
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Danh sách người dùng</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Tên đăng nhập</th>
+                                        <th>Email</th>
+                                        <th>Họ tên</th>
+                                        <th>Vai trò</th>
+                                        <th>Ngày tạo</th>
+                                        <th>Trạng thái</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var userWithRole in Model)
+                                    {
+                                        <tr>
+                                            <td>@userWithRole.User.Id</td>
+                                            <td>@userWithRole.User.UserName</td>
+                                            <td>@userWithRole.User.Email</td>
+                                            <td>@(userWithRole.User.FirstName + " " + userWithRole.User.LastName)</td>
+                                            <td>
+                                                @foreach (var role in userWithRole.Roles)
+                                                {
+                                                    <span class="badge bg-info me-1">@role</span>
+                                                }
+                                                @if (!userWithRole.Roles.Any())
+                                                {
+                                                    <span class="badge bg-secondary">User</span>
+                                                }
+                                            </td>
+                                            <td>@userWithRole.User.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                            <td>
+                                                @if (userWithRole.User.EmailConfirmed)
+                                                {
+                                                    <span class="badge bg-success">Đã xác thực</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-warning">Chưa xác thực</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <a href="@Url.Action("UserDetail", "Admin", new { id = userWithRole.User.Id })" class="btn btn-outline-primary" title="Xem chi tiết">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <button type="button" class="btn btn-outline-info" title="Đổi trạng thái" onclick="toggleUserStatus('@userWithRole.User.Id')">
+                                                        <i class="fas fa-toggle-@(userWithRole.User.IsActive ? "on" : "off")"></i>
+                                                    </button>
+                                                    @if (!userWithRole.Roles.Contains("Admin"))
+                                                    {
+                                                        <button type="button" class="btn btn-outline-danger" title="Khóa tài khoản" onclick="confirmLockUser('@userWithRole.User.Id', '@userWithRole.User.UserName')">
+                                                            <i class="fas fa-ban"></i>
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Không có người dùng nào</h5>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleUserStatus(userId) {
+            fetch('/Admin/ToggleUserStatus', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                },
+                body: JSON.stringify({
+                    id: userId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Cập nhật trạng thái thành công!');
+                    location.reload();
+                } else {
+                    alert('Lỗi: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra khi cập nhật trạng thái');
+            });
+        }
+
+        function confirmLockUser(userId, userName) {
+            if (confirm('Bạn có chắc chắn muốn khóa tài khoản "' + userName + '"?')) {
+                toggleUserStatus(userId);
+            }
+        }
+    </script>
+} 

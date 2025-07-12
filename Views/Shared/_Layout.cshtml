@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Electronics Store</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    
+    <style>
+        /* Fix dropdown z-index issues completely */
+        .navbar {
+            position: relative;
+            z-index: 1050;
+        }
+        
+        .navbar .dropdown-menu {
+            z-index: 10000 !important;
+            position: absolute !important;
+            top: 100% !important;
+            left: auto !important;
+            right: 0 !important;
+            transform: none !important;
+            will-change: auto !important;
+        }
+        
+        .navbar-nav .dropdown:hover .dropdown-menu {
+            display: block;
+            z-index: 10000 !important;
+        }
+        
+        .navbar .dropdown {
+            position: relative;
+            z-index: 1051;
+        }
+        
+        .navbar-nav .dropdown-toggle::after {
+            margin-left: 5px;
+        }
+        
+        /* Ensure dropdown is always on top */
+        .dropdown-menu.show {
+            z-index: 10000 !important;
+            position: absolute !important;
+        }
+        
+        /* Override Bootstrap dropdown positioning */
+        .dropdown-menu[data-bs-popper] {
+            z-index: 10000 !important;
+        }
+        
+        /* Login page styling */
+        .login-container {
+            min-height: 100vh !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            position: relative !important;
+        }
+        
+        .login-card {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 20px;
+        }
+        
+        /* Fix input styling */
+        .login-card .form-control {
+            background-color: #ffffff !important;
+            border: 1px solid #ced4da;
+            color: #495057 !important;
+        }
+        
+        .login-card .form-control:focus {
+            background-color: #ffffff !important;
+            border-color: #007bff;
+            color: #495057 !important;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        
+        .login-card .input-group-text {
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            color: #6c757d;
+        }
+        
+        .login-card .form-control::placeholder {
+            color: #6c757d !important;
+            opacity: 0.7;
+        }
+        
+        /* Additional fixes for login inputs */
+        .login-container input[type="email"],
+        .login-container input[type="password"],
+        .login-container input[type="text"],
+        .login-container input[type="tel"],
+        .login-container textarea {
+            background-color: #ffffff !important;
+            color: #212529 !important;
+            border: 1px solid #ced4da !important;
+        }
+        
+        .login-container input[type="email"]:focus,
+        .login-container input[type="password"]:focus,
+        .login-container input[type="text"]:focus,
+        .login-container input[type="tel"]:focus,
+        .login-container textarea:focus {
+            background-color: #ffffff !important;
+            color: #212529 !important;
+            border-color: #007bff !important;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+        }
+        
+        .login-container input::placeholder,
+        .login-container textarea::placeholder {
+            color: #6c757d !important;
+            opacity: 1 !important;
+        }
+        
+        /* Fix for autofill styling */
+        .login-container input:-webkit-autofill,
+        .login-container input:-webkit-autofill:hover,
+        .login-container input:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0 1000px white inset !important;
+            -webkit-text-fill-color: #212529 !important;
+        }
+        
+        /* Remove conflicting login container styles */
+        
+        /* Remove login page special styling to keep header/footer */
+        .login-page {
+            /* Remove special styling that hides header */
+        }
+        
+        /* Product card hover effects */
+        .product-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .product-card .card-body {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .product-card .btn {
+            z-index: 2;
+            position: relative;
+        }
+        
+        /* Hero section buttons */
+        .hero-section .btn {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        /* Cart and auth buttons */
+        .btn-outline-light:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* FLEXBOX STICKY FOOTER SOLUTION */
+        html, body {
+            height: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        body {
+            background-color: #ffffff !important;
+            color: #212529 !important;
+        }
+        
+        /* Content wrapper takes all available space and sticks footer to bottom */
+        .content-wrapper {
+            display: flex !important;
+            flex-direction: column !important;
+            min-height: 100vh !important;
+        }
+        
+        /* Footer should be at bottom with proper spacing */
+        .footer {
+            margin-top: auto !important;
+            padding: 3rem 0 2rem 0 !important;
+            background-color: #343a40 !important;
+        }
+        
+        /* Footer headings styling */
+        .footer h5 {
+            color: #ffffff !important;
+            font-size: 1.4rem !important;
+            font-weight: 600 !important;
+            margin-bottom: 1.2rem !important;
+        }
+        
+        /* Admin page specific styling */
+        .admin-page {
+            background-color: #f8f9fa !important;
+        }
+        
+        .admin-page .card-footer a {
+            color: #212529 !important;
+            font-weight: 600 !important;
+        }
+        
+        .admin-page .card-footer a:hover {
+            color: #007bff !important;
+        }
+        
+        .admin-page h1, .admin-page h2, .admin-page h3, .admin-page h4, .admin-page h5, .admin-page h6 {
+            color: #212529 !important;
+        }
+        
+        /* Header normal positioning */
+        header.navbar {
+            flex-shrink: 0 !important;
+            z-index: 9999 !important;
+        }
+        
+        /* Page wrapper grows to fill space */
+        .page-wrapper {
+            flex: 1 !important;
+            padding: 0 !important;
+        }
+        
+        /* Main content */
+        main[role="main"] {
+            background-color: #f8f9fa !important;
+            padding: 0 !important;
+            min-height: 100% !important;
+        }
+        
+        /* Footer - shrinks to fit content */
+        .footer {
+            flex-shrink: 0 !important;
+            width: 100% !important;
+            background-color: #343a40 !important;
+            color: #ffffff !important;
+            padding: 2rem 0 !important;
+            margin: 0 !important;
+        }
+        
+        /* Container fixes */
+        .container {
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+            padding-left: 15px !important;
+            padding-right: 15px !important;
+            width: 100% !important;
+        }
+        
+        .container-fluid {
+            width: 100% !important;
+            margin: 0 auto !important;
+            padding-left: 15px !important;
+            padding-right: 15px !important;
+        }
+        
+        /* Ensure content area has proper spacing */
+        .py-4, .py-5 {
+            padding-top: 1.5rem !important;
+            padding-bottom: 1.5rem !important;
+        }
+        
+        /* Page content wrapper */
+        .page-content {
+            padding: 2rem 0 !important;
+            min-height: 60vh !important;
+        }
+        
+        /* Hero section fix */
+        .hero-section {
+            padding: 4rem 0 !important;
+            margin: 0 !important;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white !important;
+        }
+        
+        .hero-section h1,
+        .hero-section p,
+        .hero-section .lead {
+            color: white !important;
+        }
+        
+        .hero-section img {
+            max-width: 100% !important;
+            height: auto !important;
+            border-radius: 10px !important;
+        }
+        
+        /* Section spacing fixes */
+        section {
+            margin: 0 !important;
+            padding: 3rem 0 !important;
+        }
+        
+        /* Ensure last section has bottom margin */
+        section:last-child {
+            margin-bottom: 2rem !important;
+        }
+        
+        .bg-light {
+            background-color: #f8f9fa !important;
+        }
+        
+        /* Login container fix */
+        .login-container {
+            padding: 3rem 0 !important;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            min-height: 60vh !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        
+        /* Footer spacing */
+        .footer p {
+            margin-bottom: 0.5rem !important;
+            line-height: 1.6 !important;
+        }
+        
+        /* COMPREHENSIVE FIX FOR ALL PAGES */
+        
+        /* Force white backgrounds and proper colors everywhere */
+        * {
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            background-color: #ffffff !important;
+            color: #212529 !important;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Fix all input fields across all pages */
+        input[type="text"],
+        input[type="email"], 
+        input[type="password"],
+        input[type="tel"],
+        input[type="number"],
+        input[type="search"],
+        textarea,
+        select,
+        .form-control,
+        .form-select {
+            background-color: #ffffff !important;
+            color: #212529 !important;
+            border: 1px solid #ced4da !important;
+            padding: 0.375rem 0.75rem !important;
+        }
+        
+        /* Focus states */
+        input[type="text"]:focus,
+        input[type="email"]:focus, 
+        input[type="password"]:focus,
+        input[type="tel"]:focus,
+        input[type="number"]:focus,
+        input[type="search"]:focus,
+        textarea:focus,
+        select:focus,
+        .form-control:focus,
+        .form-select:focus {
+            background-color: #ffffff !important;
+            color: #212529 !important;
+            border-color: #007bff !important;
+            outline: 0 !important;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+        }
+        
+        /* Placeholder text */
+        input::placeholder,
+        textarea::placeholder {
+            color: #6c757d !important;
+            opacity: 1 !important;
+        }
+        
+        /* Autofill fix for all browsers */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 1000px white inset !important;
+            -webkit-text-fill-color: #212529 !important;
+            background-color: #ffffff !important;
+        }
+        
+        /* Cards */
+        .card {
+            background-color: #ffffff !important;
+            border: 1px solid #dee2e6 !important;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+        }
+        
+        .card-body {
+            background-color: #ffffff !important;
+            color: #212529 !important;
+        }
+        
+        .card-header {
+            background-color: #f8f9fa !important;
+            border-bottom: 1px solid #dee2e6 !important;
+            color: #212529 !important;
+        }
+        
+        .card-title, .card-text {
+            color: #212529 !important;
+        }
+        
+        /* Main content areas */
+        main[role="main"] {
+            background-color: #f8f9fa !important;
+            flex: 1 !important;
+            padding-bottom: 2rem !important;
+        }
+        
+        /* Page content wrapper */
+        .page-content {
+            background-color: #f8f9fa !important;
+            flex: 1 !important;
+            padding-bottom: 2rem !important;
+        }
+        
+        /* Page wrapper should also flex */
+        .page-wrapper {
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+        
+        /* Container fixes */
+        .container, .container-fluid {
+            background-color: transparent !important;
+        }
+        
+        /* Login container special handling */
+        .login-container {
+            min-height: calc(100vh - 150px) !important;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            padding: 2rem 0 !important;
+        }
+        
+        /* Background utilities */
+        .bg-light {
+            background-color: #f8f9fa !important;
+        }
+        
+        .bg-dark {
+            background-color: #343a40 !important;
+            color: #ffffff !important;
+        }
+        
+        /* Text color fixes */
+        h1, h2, h3, h4, h5, h6 {
+            color: #212529 !important;
+        }
+        
+        p, span, div, label {
+            color: inherit !important;
+        }
+        
+        /* Additional dropdown fixes for navigation */
+        .navbar .dropdown-menu {
+            z-index: 10000 !important;
+            position: absolute !important;
+            top: 100% !important;
+            border: 1px solid rgba(0,0,0,.15) !important;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+            background-color: #ffffff !important;
+        }
+        
+        .navbar .dropdown-menu .dropdown-item {
+            color: #212529 !important;
+            padding: 0.5rem 1rem !important;
+        }
+        
+        .navbar .dropdown-menu .dropdown-item:hover {
+            background-color: #f8f9fa !important;
+            color: #212529 !important;
+        }
+        
+        /* Ensure header always stays on top */
+        header {
+            z-index: 9999 !important;
+            position: relative !important;
+        }
+        
+        .navbar {
+            z-index: 9999 !important;
+        }
+        
+        /* Navbar search styling */
+        .navbar-search-results {
+            max-height: 400px;
+            overflow-y: auto;
+            background: white;
+            border-radius: 0.375rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border: 1px solid #dee2e6;
+        }
+        
+        .navbar-search-result-item {
+            padding: 0.75rem;
+            border-bottom: 1px solid #dee2e6;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            color: #212529;
+        }
+        
+        .navbar-search-result-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .navbar-search-result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .navbar-search-result-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 0.375rem;
+        }
+        
+        @@media (max-width: 991.98px) {
+            .navbar-search {
+                margin: 1rem 0;
+                max-width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body class="@ViewData["BodyClass"]">
+    <div class="content-wrapper">
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+                <div class="container">
+                    <a class="navbar-brand fw-bold" href="@Url.Action("Index", "Home")">
+                        <i class="fas fa-laptop me-2"></i>Electronics Store
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        @if (ViewData["BodyClass"]?.ToString() != "admin-page")
+                        {
+                            <ul class="navbar-nav me-3">
+                                @if (!User.IsInRole("Admin"))
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="@Url.Action("Index", "Home")">Trang chủ</a>
+                                    </li>
+                                }
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("Products", "Home")">Sản phẩm</a>
+                                </li>
+                            </ul>
+                            
+                            <!-- Search Bar -->
+                            <div class="navbar-search flex-grow-1 mx-3" style="max-width: 400px; position: relative;">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="navbarSearchInput" placeholder="Tìm kiếm sản phẩm..." aria-label="Tìm kiếm sản phẩm">
+                                    <button class="btn btn-outline-light" type="button" id="navbarSearchButton">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                                <div id="navbarSearchResults" class="navbar-search-results position-absolute w-100 mt-1" style="display: none; z-index: 10001;"></div>
+                            </div>
+                        }
+                        else
+                        {
+                            <ul class="navbar-nav me-auto">
+                                <li class="nav-item">
+                                    <span class="navbar-text text-light">
+                                        <i class="fas fa-cogs me-2"></i>Bảng điều khiển Admin
+                                    </span>
+                                </li>
+                            </ul>
+                        }
+                        <ul class="navbar-nav">
+                            @if (ViewData["BodyClass"]?.ToString() != "admin-page")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("Index", "Cart")">
+                                        <i class="fas fa-shopping-cart me-1"></i>
+                                        Giỏ hàng
+                                        <span class="badge bg-danger ms-1" id="cartCount" style="display: none;">0</span>
+                                    </a>
+                                </li>
+                            }
+                            @if (User.Identity?.IsAuthenticated == true)
+                            {
+                                @if (ViewData["BodyClass"]?.ToString() != "admin-page")
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="@Url.Action("Orders", "Home")">
+                                            <i class="fas fa-box me-1"></i>Đơn hàng
+                                        </a>
+                                    </li>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="@Url.Action("Index", "Admin")">
+                                                <i class="fas fa-cog me-1"></i>Quản trị
+                                            </a>
+                                        </li>
+                                    }
+                                                }
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-user me-1"></i>
+                                        @{
+                                            var currentUser = ViewData["CurrentUser"] as ElectronicsStore.Models.User;
+                                            var displayName = currentUser?.FirstName + " " + currentUser?.LastName;
+                                            if (string.IsNullOrWhiteSpace(displayName?.Trim()))
+                                            {
+                                                displayName = User.Identity.Name;
+                                            }
+                                        }
+                                        @displayName
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="@Url.Action("Profile", "Account")">
+                                            <i class="fas fa-user-circle me-2"></i>Thông tin cá nhân
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("Orders", "Home")">
+                                            <i class="fas fa-box me-2"></i>Đơn hàng của tôi
+                                        </a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <form method="post" action="@Url.Action("Logout", "Account")" class="d-inline">
+                                                <button type="submit" class="dropdown-item">
+                                                    <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("Login", "Account")">
+                                        <i class="fas fa-sign-in-alt me-1"></i>Đăng nhập
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("Register", "Account")">
+                                        <i class="fas fa-user-plus me-1"></i>Đăng ký
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <div class="page-wrapper">
+            <main role="main">
+                @RenderBody()
+            </main>
+        </div>
+        
+        <footer class="footer bg-dark text-light">
+            <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5 class="fw-bold">Electronics Store</h5>
+                    <p style="line-height: 1.6;">Cửa hàng thiết bị điện tử uy tín,<br>chất lượng cao với giá cả hợp lý.</p>
+                    <div class="social-links">
+                        <a href="#" class="text-light me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-light me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-light me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h5>Liên kết nhanh</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="@Url.Action("Index", "Home")" class="text-light text-decoration-none">Trang chủ</a></li>
+                        <li><a href="@Url.Action("Products", "Home")" class="text-light text-decoration-none">Sản phẩm</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Về chúng tôi</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Liên hệ</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Thông tin liên hệ</h5>
+                    <p><i class="fas fa-map-marker-alt me-2"></i>123 Đường ABC, Quận 1, TP.HCM</p>
+                    <p><i class="fas fa-phone me-2"></i>(028) 1234-5678</p>
+                    <p><i class="fas fa-envelope me-2"></i>info@electronicsstore.com</p>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p>&copy; @DateTime.Now.Year Electronics Store. Tất cả quyền được bảo lưu.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    </div> <!-- End content-wrapper -->
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Custom JS -->
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <!-- Cart Count Update -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartCount();
+            initializeDropdowns();
+        });
+
+        // Initialize dropdown handling
+        function initializeDropdowns() {
+            const dropdownElements = document.querySelectorAll('.navbar .dropdown-toggle');
+            
+            dropdownElements.forEach(function(element) {
+                // Add Bootstrap dropdown instance
+                const dropdown = new bootstrap.Dropdown(element);
+                
+                // Force z-index on show
+                element.addEventListener('show.bs.dropdown', function() {
+                    const menu = this.nextElementSibling;
+                    if (menu) {
+                        menu.style.zIndex = '10000';
+                        menu.style.position = 'absolute';
+                    }
+                });
+                
+                // Cleanup on hide
+                element.addEventListener('hide.bs.dropdown', function() {
+                    const menu = this.nextElementSibling;
+                    if (menu) {
+                        // Keep z-index for next time
+                        menu.style.zIndex = '10000';
+                    }
+                });
+            });
+        }
+
+        async function updateCartCount() {
+            try {
+                const response = await fetch('/Cart/GetCartCount');
+                if (response.ok) {
+                    const data = await response.json();
+                    const cartCountElement = document.getElementById('cartCount');
+                    if (cartCountElement) {
+                        cartCountElement.textContent = data.count || 0;
+                        cartCountElement.style.display = data.count > 0 ? 'inline' : 'none';
+                    }
+                }
+            } catch (error) {
+                console.log('Error updating cart count:', error);
+                // Hide cart count on error
+                const cartCountElement = document.getElementById('cartCount');
+                if (cartCountElement) {
+                    cartCountElement.style.display = 'none';
+                }
+            }
+        }
+        
+        // Make updateCartCount globally available
+        window.updateCartCount = updateCartCount;
+        
+        // Initialize navbar search functionality
+        initializeNavbarSearch();
+        
+        function initializeNavbarSearch() {
+            const navbarSearchInput = document.getElementById('navbarSearchInput');
+            const navbarSearchButton = document.getElementById('navbarSearchButton');
+            const navbarSearchResults = document.getElementById('navbarSearchResults');
+            
+            if (!navbarSearchInput) return; // Not on a page with navbar search
+            
+            let searchTimeout;
+            
+            // Search on input change (debounced)
+            navbarSearchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const query = this.value.trim();
+                
+                if (query.length >= 2) {
+                    searchTimeout = setTimeout(() => {
+                        performNavbarSearch(query);
+                    }, 500);
+                } else {
+                    hideNavbarSearchResults();
+                }
+            });
+            
+            // Search on button click
+            navbarSearchButton.addEventListener('click', function() {
+                const query = navbarSearchInput.value.trim();
+                if (query.length >= 2) {
+                    performNavbarSearch(query);
+                } else {
+                    // Navigate to products page
+                    window.location.href = '/Home/Products';
+                }
+            });
+            
+            // Search on Enter key
+            navbarSearchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const query = this.value.trim();
+                    if (query.length >= 2) {
+                        performNavbarSearch(query);
+                    } else {
+                        // Navigate to products page
+                        window.location.href = '/Home/Products';
+                    }
+                }
+            });
+            
+            // Hide search results when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.navbar-search')) {
+                    hideNavbarSearchResults();
+                }
+            });
+        }
+        
+        async function performNavbarSearch(query) {
+            try {
+                const response = await fetch(`/api/products/search?query=${encodeURIComponent(query)}&limit=5`);
+                if (response.ok) {
+                    const products = await response.json();
+                    displayNavbarSearchResults(products);
+                } else {
+                    console.error('Error searching products:', response.status);
+                }
+            } catch (error) {
+                console.error('Error searching products:', error);
+            }
+        }
+        
+        function displayNavbarSearchResults(products) {
+            const navbarSearchResults = document.getElementById('navbarSearchResults');
+            if (!navbarSearchResults) return;
+            
+            if (products.length === 0) {
+                navbarSearchResults.innerHTML = '<div class="p-3 text-center text-muted">Không tìm thấy sản phẩm nào</div>';
+            } else {
+                navbarSearchResults.innerHTML = products.map(product => `
+                    <div class="navbar-search-result-item" onclick="goToNavbarProduct(${product.id})">
+                        <div class="d-flex align-items-center">
+                            <img src="${product.imageUrl || 'https://via.placeholder.com/50x50/007bff/ffffff?text=' + encodeURIComponent(product.name.charAt(0))}" 
+                                 class="navbar-search-result-image me-3" alt="${product.name}">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">${product.name}</h6>
+                                <p class="mb-1 text-muted small">${product.categoryName}</p>
+                                <div class="d-flex align-items-center">
+                                    ${product.hasDiscount ? 
+                                        `<span class="text-success fw-bold">${product.finalPrice.toLocaleString()} VNĐ</span>
+                                         <span class="text-muted text-decoration-line-through ms-2 small">${product.price.toLocaleString()} VNĐ</span>` :
+                                        `<span class="text-success fw-bold">${product.price.toLocaleString()} VNĐ</span>`
+                                    }
+                                    ${product.isInStock ? 
+                                        '<span class="badge bg-success ms-2">Còn hàng</span>' : 
+                                        '<span class="badge bg-danger ms-2">Hết hàng</span>'
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            navbarSearchResults.style.display = 'block';
+        }
+        
+        function hideNavbarSearchResults() {
+            const navbarSearchResults = document.getElementById('navbarSearchResults');
+            if (navbarSearchResults) {
+                navbarSearchResults.style.display = 'none';
+            }
+        }
+        
+        function goToNavbarProduct(productId) {
+            window.location.href = `/Home/ProductDetail/${productId}`;
+        }
+    </script>
+    
+    @RenderSection("Scripts", required: false)
+</body>
+</html> 

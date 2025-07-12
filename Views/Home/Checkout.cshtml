@@ -1,0 +1,482 @@
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<div class="page-content">
+    <div class="container py-4">
+        <!-- Checkout Header -->
+        <div class="text-center mb-5">
+            <h2><i class="fas fa-credit-card"></i> Checkout</h2>
+            <p class="text-muted">Complete your order</p>
+        </div>
+
+        <!-- Checkout Steps -->
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-8">
+                <div class="checkout-steps d-flex justify-content-between">
+                    <div class="step active">
+                        <div class="step-icon"><i class="fas fa-shopping-cart"></i></div>
+                        <div class="step-title">Cart</div>
+                    </div>
+                    <div class="step active">
+                        <div class="step-icon"><i class="fas fa-shipping-fast"></i></div>
+                        <div class="step-title">Shipping</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon"><i class="fas fa-credit-card"></i></div>
+                        <div class="step-title">Payment</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon"><i class="fas fa-check"></i></div>
+                        <div class="step-title">Complete</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Checkout Form -->
+            <div class="col-lg-8">
+                <!-- Shipping Information -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-truck"></i> Shipping Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="checkoutForm">
+                            @Html.AntiForgeryToken()
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="firstName" class="form-label">First Name *</label>
+                                    <input type="text" class="form-control" id="firstName" value="Test User" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="lastName" class="form-label">Last Name *</label>
+                                    <input type="text" class="form-control" id="lastName" value="Demo" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email Address *</label>
+                                <input type="email" class="form-control" id="email" value="demo@test.com" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Phone Number *</label>
+                                <input type="tel" class="form-control" id="phone" value="0123456789" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Street Address *</label>
+                                <input type="text" class="form-control" id="address" value="123 Test Street" required>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="city" class="form-label">City *</label>
+                                    <input type="text" class="form-control" id="city" value="Ho Chi Minh City" required>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="state" class="form-label">State *</label>
+                                    <input type="text" class="form-control" id="state" value="VN" required>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="zipCode" class="form-label">Zip Code *</label>
+                                    <input type="text" class="form-control" id="zipCode" value="70000" required>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Payment Information -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-credit-card"></i> Payment Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> 
+                            This is a demo store. No real payments are processed.
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Payment Method</label>
+                            <div class="payment-methods">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="creditCard" value="credit" checked>
+                                    <label class="form-check-label" for="creditCard">
+                                        <i class="fab fa-cc-visa"></i>
+                                        <i class="fab fa-cc-mastercard"></i>
+                                        <i class="fab fa-cc-amex"></i>
+                                        Credit Card (Demo)
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="paypal" value="paypal">
+                                    <label class="form-check-label" for="paypal">
+                                        <i class="fab fa-paypal"></i> PayPal (Demo)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="creditCardForm">
+                            <div class="mb-3">
+                                <label for="cardNumber" class="form-label">Card Number</label>
+                                <input type="text" class="form-control" id="cardNumber" value="4111 1111 1111 1111" placeholder="1234 5678 9012 3456" maxlength="19">
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="expiryDate" class="form-label">Expiry Date</label>
+                                    <input type="text" class="form-control" id="expiryDate" value="12/25" placeholder="MM/YY" maxlength="5">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="cvv" class="form-label">CVV</label>
+                                    <input type="text" class="form-control" id="cvv" value="123" placeholder="123" maxlength="4">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="cardName" class="form-label">Name on Card</label>
+                                <input type="text" class="form-control" id="cardName" value="Test User">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Notes -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-sticky-note"></i> Order Notes (Optional)</h5>
+                    </div>
+                    <div class="card-body">
+                        <textarea class="form-control" id="orderNotes" rows="3" placeholder="Any special instructions for your order..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-lg-4">
+                <div class="card sticky-top">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-receipt"></i> Order Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Loading -->
+                        <div id="orderSummaryLoading" class="text-center py-3">
+                            <div class="spinner-border text-primary" role="status"></div>
+                            <p class="mt-2">Loading...</p>
+                        </div>
+
+                        <!-- Order Items -->
+                        <div id="orderItems" style="display: none;">
+                            <!-- Items will be loaded dynamically -->
+                        </div>
+
+                        <!-- Pricing -->
+                        <div id="orderPricing" style="display: none;">
+                            <hr>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotal:</span>
+                                <span id="orderSubtotal">0 VNĐ</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Shipping:</span>
+                                <span id="orderShipping">Free</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Tax:</span>
+                                <span id="orderTax">0 VNĐ</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between mb-3">
+                                <strong>Total:</strong>
+                                <strong id="orderTotal" class="text-primary h5">0 VNĐ</strong>
+                            </div>
+
+                            <!-- Place Order Button -->
+                            <button class="btn btn-success w-100 btn-lg" onclick="placeOrder()" id="placeOrderBtn">
+                                <span id="placeOrderText">
+                                    <i class="fas fa-check"></i> Place Order
+                                </span>
+                                <span id="placeOrderSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                            </button>
+
+                            <div class="text-center mt-3">
+                                <small class="text-muted">
+                                    <i class="fas fa-lock"></i> Secure checkout (Demo)
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Empty Cart -->
+                        <div id="emptyCartCheckout" class="text-center py-3" style="display: none;">
+                            <i class="fas fa-shopping-cart fa-3x text-muted"></i>
+                            <p class="mt-2">Your cart is empty</p>
+                            <a href="/Home/Products" class="btn btn-primary">Continue Shopping</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let orderData = {
+            items: [],
+            subtotal: 0,
+            shipping: 0,
+            tax: 0,
+            total: 0
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadOrderSummary();
+            setupPaymentMethodToggle();
+        });
+
+        async function loadOrderSummary() {
+            const loading = document.getElementById('orderSummaryLoading');
+            const items = document.getElementById('orderItems');
+            const pricing = document.getElementById('orderPricing');
+            const empty = document.getElementById('emptyCartCheckout');
+
+            loading.style.display = 'block';
+            items.style.display = 'none';
+            pricing.style.display = 'none';
+            empty.style.display = 'none';
+
+            try {
+                // Load cart items from server
+                const response = await fetch('/Cart/GetCartItems', { credentials: 'include' });
+                if (!response.ok) {
+                    throw new Error('Failed to load cart items');
+                }
+
+                const result = await response.json();
+                if (!result.success) {
+                    throw new Error(result.message || 'Failed to load cart');
+                }
+
+                if (!result.items || result.items.length === 0) {
+                    loading.style.display = 'none';
+                    empty.style.display = 'block';
+                    return;
+                }
+
+                // Use real cart data
+                orderData.items = result.items.map(item => ({
+                    productId: item.productId,
+                    quantity: item.quantity,
+                    product: {
+                        id: item.product.id,
+                        name: item.product.name,
+                        brand: item.product.brand,
+                        finalPrice: item.product.finalPrice,
+                        imageUrl: item.product.imageUrl
+                    }
+                }));
+                calculateOrderTotals();
+                displayOrderSummary();
+                
+                loading.style.display = 'none';
+                items.style.display = 'block';
+                pricing.style.display = 'block';
+            } catch (error) {
+                console.error('Error loading order details:', error);
+                loading.style.display = 'none';
+                empty.style.display = 'block';
+            }
+        }
+
+        function calculateOrderTotals() {
+            orderData.subtotal = orderData.items.reduce((sum, item) => 
+                sum + (item.product.finalPrice * item.quantity), 0);
+            orderData.shipping = 0; // Free shipping for demo
+            orderData.tax = orderData.subtotal * 0.1; // 10% tax
+            orderData.total = orderData.subtotal + orderData.shipping + orderData.tax;
+        }
+
+        function displayOrderSummary() {
+            // Display items
+            const itemsContainer = document.getElementById('orderItems');
+            itemsContainer.innerHTML = orderData.items.map(item => `
+                <div class="d-flex mb-3">
+                    <img src="${item.product.imageUrl}" 
+                         alt="${item.product.name}" style="width: 50px; height: 50px; object-fit: cover;" class="rounded me-3">
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1">${item.product.name}</h6>
+                        <small class="text-muted">${item.product.brand}</small>
+                        <div class="d-flex justify-content-between">
+                            <span>Qty: ${item.quantity}</span>
+                            <span class="fw-bold">${(item.product.finalPrice * item.quantity).toLocaleString()} VNĐ</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Display pricing
+            document.getElementById('orderSubtotal').textContent = `${orderData.subtotal.toLocaleString()} VNĐ`;
+            document.getElementById('orderShipping').textContent = 'Miễn phí';
+            document.getElementById('orderTax').textContent = `${orderData.tax.toLocaleString()} VNĐ`;
+            document.getElementById('orderTotal').textContent = `${orderData.total.toLocaleString()} VNĐ`;
+        }
+
+        function setupPaymentMethodToggle() {
+            const creditRadio = document.getElementById('creditCard');
+            const paypalRadio = document.getElementById('paypal');
+            const creditForm = document.getElementById('creditCardForm');
+
+            function toggleCreditForm() {
+                creditForm.style.display = creditRadio.checked ? 'block' : 'none';
+            }
+
+            creditRadio.addEventListener('change', toggleCreditForm);
+            paypalRadio.addEventListener('change', toggleCreditForm);
+            toggleCreditForm();
+        }
+
+        async function placeOrder() {
+            const btn = document.getElementById('placeOrderBtn');
+            const text = document.getElementById('placeOrderText');
+            const spinner = document.getElementById('placeOrderSpinner');
+
+            btn.disabled = true;
+            text.classList.add('d-none');
+            spinner.classList.remove('d-none');
+
+            try {
+                // Prepare order data
+                const orderRequest = {
+                    shippingAddress: {
+                        firstName: document.getElementById('firstName').value,
+                        lastName: document.getElementById('lastName').value,
+                        email: document.getElementById('email').value,
+                        phone: document.getElementById('phone').value,
+                        address: document.getElementById('address').value,
+                        city: document.getElementById('city').value,
+                        state: document.getElementById('state').value,
+                        zipCode: document.getElementById('zipCode').value
+                    },
+                    paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
+                    notes: document.getElementById('orderNotes').value
+                };
+
+                // Call demo order API
+                const response = await fetch('/Home/ProcessDemoOrder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(orderRequest)
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('Order placed successfully!', 'success');
+                    
+                    // Redirect to orders page
+                    setTimeout(() => {
+                        window.location.href = '/Home/Orders';
+                    }, 1500);
+                } else {
+                    throw new Error(result.message || 'Order placement failed');
+                }
+
+            } catch (error) {
+                console.error('Error placing order:', error);
+                showToast('Error placing order. Please try again.', 'danger');
+            } finally {
+                btn.disabled = false;
+                text.classList.remove('d-none');
+                spinner.classList.add('d-none');
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            toast.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.remove();
+                }
+            }, 4000);
+        }
+    </script>
+
+    <style>
+        .checkout-steps .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .checkout-steps .step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 25px;
+            right: -50%;
+            width: 100%;
+            height: 2px;
+            background: #e0e0e0;
+            z-index: 0;
+        }
+
+        .checkout-steps .step.active::after {
+            background: #007bff;
+        }
+
+        .checkout-steps .step-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .checkout-steps .step.active .step-icon {
+            background: #007bff;
+            color: white;
+        }
+
+        .checkout-steps .step-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .payment-methods .form-check {
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .payment-methods .form-check:hover {
+            border-color: #007bff;
+        }
+
+        .payment-methods .form-check-input:checked + .form-check-label {
+            color: #007bff;
+        }
+    </style>
+}
