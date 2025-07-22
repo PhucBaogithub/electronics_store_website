@@ -3,6 +3,7 @@ using System;
 using ElectronicsStore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ElectronicsStore.Migrations
 {
     [DbContext(typeof(ElectronicsStoreContext))]
-    partial class ElectronicsStoreContextModelSnapshot : ModelSnapshot
+    [Migration("20250722121238_AddChatMessages")]
+    partial class AddChatMessages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.6");
@@ -88,7 +91,7 @@ namespace ElectronicsStore.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 249, DateTimeKind.Utc).AddTicks(4270),
+                            CreatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 653, DateTimeKind.Utc).AddTicks(9160),
                             Description = "CPUs and microprocessors",
                             IsActive = true,
                             Name = "Processors"
@@ -96,7 +99,7 @@ namespace ElectronicsStore.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 249, DateTimeKind.Utc).AddTicks(4750),
+                            CreatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 653, DateTimeKind.Utc).AddTicks(9640),
                             Description = "RAM and storage devices",
                             IsActive = true,
                             Name = "Memory"
@@ -104,7 +107,7 @@ namespace ElectronicsStore.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 249, DateTimeKind.Utc).AddTicks(4760),
+                            CreatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 653, DateTimeKind.Utc).AddTicks(9640),
                             Description = "GPUs and video cards",
                             IsActive = true,
                             Name = "Graphics Cards"
@@ -112,7 +115,7 @@ namespace ElectronicsStore.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 249, DateTimeKind.Utc).AddTicks(4760),
+                            CreatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 653, DateTimeKind.Utc).AddTicks(9650),
                             Description = "Computer motherboards and mainboards",
                             IsActive = true,
                             Name = "Motherboards"
@@ -120,7 +123,7 @@ namespace ElectronicsStore.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 249, DateTimeKind.Utc).AddTicks(4760),
+                            CreatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 653, DateTimeKind.Utc).AddTicks(9650),
                             Description = "Hard drives, SSDs, and storage solutions",
                             IsActive = true,
                             Name = "Storage"
@@ -128,7 +131,7 @@ namespace ElectronicsStore.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 249, DateTimeKind.Utc).AddTicks(4760),
+                            CreatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 653, DateTimeKind.Utc).AddTicks(9650),
                             Description = "PSUs and power management",
                             IsActive = true,
                             Name = "Power Supplies"
@@ -136,7 +139,7 @@ namespace ElectronicsStore.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 249, DateTimeKind.Utc).AddTicks(4810),
+                            CreatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 653, DateTimeKind.Utc).AddTicks(9650),
                             Description = "Fans, coolers, and thermal solutions",
                             IsActive = true,
                             Name = "Cooling"
@@ -144,48 +147,11 @@ namespace ElectronicsStore.Migrations
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 249, DateTimeKind.Utc).AddTicks(4810),
+                            CreatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 653, DateTimeKind.Utc).AddTicks(9670),
                             Description = "Computer cases and chassis",
                             IsActive = true,
                             Name = "Cases"
                         });
-                });
-
-            modelBuilder.Entity("ElectronicsStore.Models.ChatMessage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("ConversationId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsFromUser")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("MessageType")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("ProductData")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ChatMessages");
                 });
 
             modelBuilder.Entity("ElectronicsStore.Models.Order", b =>
@@ -382,7 +348,7 @@ namespace ElectronicsStore.Migrations
                             Id = 1,
                             Brand = "Intel",
                             CategoryId = 1,
-                            CreatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 249, DateTimeKind.Utc).AddTicks(8400),
+                            CreatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 654, DateTimeKind.Utc).AddTicks(3090),
                             Description = "12th Gen Intel Core processor",
                             IsActive = true,
                             IsFeatured = true,
@@ -390,14 +356,14 @@ namespace ElectronicsStore.Migrations
                             Name = "Intel Core i7-12700K",
                             Price = 399.99m,
                             StockQuantity = 50,
-                            UpdatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 249, DateTimeKind.Utc).AddTicks(8400)
+                            UpdatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 654, DateTimeKind.Utc).AddTicks(3090)
                         },
                         new
                         {
                             Id = 2,
                             Brand = "AMD",
                             CategoryId = 1,
-                            CreatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 249, DateTimeKind.Utc).AddTicks(9700),
+                            CreatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 654, DateTimeKind.Utc).AddTicks(4320),
                             Description = "8-core, 16-thread desktop processor",
                             IsActive = true,
                             IsFeatured = true,
@@ -405,14 +371,14 @@ namespace ElectronicsStore.Migrations
                             Name = "AMD Ryzen 7 5800X",
                             Price = 299.99m,
                             StockQuantity = 30,
-                            UpdatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 249, DateTimeKind.Utc).AddTicks(9700)
+                            UpdatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 654, DateTimeKind.Utc).AddTicks(4320)
                         },
                         new
                         {
                             Id = 3,
                             Brand = "Corsair",
                             CategoryId = 2,
-                            CreatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 249, DateTimeKind.Utc).AddTicks(9700),
+                            CreatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 654, DateTimeKind.Utc).AddTicks(4330),
                             Description = "High-performance DDR4 memory",
                             IsActive = true,
                             IsFeatured = false,
@@ -420,14 +386,14 @@ namespace ElectronicsStore.Migrations
                             Name = "Corsair Vengeance LPX 16GB DDR4",
                             Price = 79.99m,
                             StockQuantity = 100,
-                            UpdatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 249, DateTimeKind.Utc).AddTicks(9700)
+                            UpdatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 654, DateTimeKind.Utc).AddTicks(4330)
                         },
                         new
                         {
                             Id = 4,
                             Brand = "G.Skill",
                             CategoryId = 2,
-                            CreatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 249, DateTimeKind.Utc).AddTicks(9700),
+                            CreatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 654, DateTimeKind.Utc).AddTicks(4330),
                             Description = "RGB DDR4 memory kit",
                             IsActive = true,
                             IsFeatured = false,
@@ -435,14 +401,14 @@ namespace ElectronicsStore.Migrations
                             Name = "G.Skill Trident Z RGB 32GB DDR4",
                             Price = 149.99m,
                             StockQuantity = 25,
-                            UpdatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 249, DateTimeKind.Utc).AddTicks(9700)
+                            UpdatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 654, DateTimeKind.Utc).AddTicks(4330)
                         },
                         new
                         {
                             Id = 5,
                             Brand = "NVIDIA",
                             CategoryId = 3,
-                            CreatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 249, DateTimeKind.Utc).AddTicks(9710),
+                            CreatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 654, DateTimeKind.Utc).AddTicks(4330),
                             Description = "High-performance graphics card",
                             DiscountPrice = 549.99m,
                             IsActive = true,
@@ -451,14 +417,14 @@ namespace ElectronicsStore.Migrations
                             Name = "NVIDIA RTX 4070",
                             Price = 599.99m,
                             StockQuantity = 15,
-                            UpdatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 249, DateTimeKind.Utc).AddTicks(9710)
+                            UpdatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 654, DateTimeKind.Utc).AddTicks(4330)
                         },
                         new
                         {
                             Id = 6,
                             Brand = "AMD",
                             CategoryId = 3,
-                            CreatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 250, DateTimeKind.Utc).AddTicks(20),
+                            CreatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 654, DateTimeKind.Utc).AddTicks(4620),
                             Description = "RDNA 3 graphics card",
                             IsActive = true,
                             IsFeatured = false,
@@ -466,14 +432,14 @@ namespace ElectronicsStore.Migrations
                             Name = "AMD Radeon RX 7800 XT",
                             Price = 499.99m,
                             StockQuantity = 20,
-                            UpdatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 250, DateTimeKind.Utc).AddTicks(20)
+                            UpdatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 654, DateTimeKind.Utc).AddTicks(4620)
                         },
                         new
                         {
                             Id = 7,
                             Brand = "ASUS",
                             CategoryId = 4,
-                            CreatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 250, DateTimeKind.Utc).AddTicks(20),
+                            CreatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 654, DateTimeKind.Utc).AddTicks(4630),
                             Description = "ATX gaming motherboard",
                             IsActive = true,
                             IsFeatured = false,
@@ -481,14 +447,14 @@ namespace ElectronicsStore.Migrations
                             Name = "ASUS ROG Strix B550-F Gaming",
                             Price = 189.99m,
                             StockQuantity = 40,
-                            UpdatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 250, DateTimeKind.Utc).AddTicks(20)
+                            UpdatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 654, DateTimeKind.Utc).AddTicks(4630)
                         },
                         new
                         {
                             Id = 8,
                             Brand = "MSI",
                             CategoryId = 4,
-                            CreatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 250, DateTimeKind.Utc).AddTicks(20),
+                            CreatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 654, DateTimeKind.Utc).AddTicks(4630),
                             Description = "Intel Z690 motherboard",
                             IsActive = true,
                             IsFeatured = false,
@@ -496,14 +462,14 @@ namespace ElectronicsStore.Migrations
                             Name = "MSI MPG Z690 Carbon",
                             Price = 299.99m,
                             StockQuantity = 25,
-                            UpdatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 250, DateTimeKind.Utc).AddTicks(20)
+                            UpdatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 654, DateTimeKind.Utc).AddTicks(4630)
                         },
                         new
                         {
                             Id = 9,
                             Brand = "Samsung",
                             CategoryId = 5,
-                            CreatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 250, DateTimeKind.Utc).AddTicks(20),
+                            CreatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 654, DateTimeKind.Utc).AddTicks(4630),
                             Description = "High-speed NVMe SSD",
                             IsActive = true,
                             IsFeatured = true,
@@ -511,14 +477,14 @@ namespace ElectronicsStore.Migrations
                             Name = "Samsung 980 PRO 1TB NVMe SSD",
                             Price = 129.99m,
                             StockQuantity = 60,
-                            UpdatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 250, DateTimeKind.Utc).AddTicks(20)
+                            UpdatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 654, DateTimeKind.Utc).AddTicks(4630)
                         },
                         new
                         {
                             Id = 10,
                             Brand = "Western Digital",
                             CategoryId = 5,
-                            CreatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 250, DateTimeKind.Utc).AddTicks(30),
+                            CreatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 654, DateTimeKind.Utc).AddTicks(4630),
                             Description = "High-performance hard drive",
                             IsActive = true,
                             IsFeatured = false,
@@ -526,7 +492,7 @@ namespace ElectronicsStore.Migrations
                             Name = "Western Digital Black 2TB HDD",
                             Price = 89.99m,
                             StockQuantity = 80,
-                            UpdatedAt = new DateTime(2025, 7, 22, 12, 31, 56, 250, DateTimeKind.Utc).AddTicks(30)
+                            UpdatedAt = new DateTime(2025, 7, 22, 12, 12, 37, 654, DateTimeKind.Utc).AddTicks(4630)
                         });
                 });
 
@@ -789,16 +755,6 @@ namespace ElectronicsStore.Migrations
                         .IsRequired();
 
                     b.Navigation("Product");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ElectronicsStore.Models.ChatMessage", b =>
-                {
-                    b.HasOne("ElectronicsStore.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("User");
                 });

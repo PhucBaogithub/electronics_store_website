@@ -10,6 +10,7 @@ Một ứng dụng web bán hàng điện tử được xây dựng với ASP.NE
 - **Giỏ hàng**: Thêm sản phẩm vào giỏ hàng và thanh toán
 - **Quản lý đơn hàng**: Theo dõi trạng thái đơn hàng
 - **Hệ thống phân quyền**: Admin và User với quyền hạn khác nhau
+- **Chatbot thông minh**: Trợ lý ảo hỗ trợ khách hàng 24/7
 - **Giao diện responsive**: Tương thích với mọi thiết bị
 
 ## 🛠️ Công nghệ sử dụng
@@ -19,6 +20,7 @@ Một ứng dụng web bán hàng điện tử được xây dựng với ASP.NE
 - **Authentication**: ASP.NET Core Identity
 - **Frontend**: HTML, CSS, JavaScript, Bootstrap 5
 - **Icons**: Font Awesome
+- **AI Chatbot**: Intelligent customer support system
 - **Architecture**: MVC Pattern
 
 ## 📋 Yêu cầu hệ thống
@@ -105,13 +107,45 @@ ElectronicsStore/
 3. Thêm sản phẩm vào giỏ hàng
 4. Thanh toán và theo dõi đơn hàng
 5. Đánh giá sản phẩm đã mua
+6. Sử dụng chatbot để được hỗ trợ tức thì
+
+## 🤖 Chatbot - Trợ lý ảo thông minh
+
+### Tính năng Chatbot:
+- **Hỗ trợ 24/7**: Trả lời câu hỏi của khách hàng bất cứ lúc nào
+- **Tìm kiếm sản phẩm thông minh**: Hiểu ngôn ngữ tự nhiên và gợi ý sản phẩm phù hợp
+- **Thông tin chi tiết**: Hiển thị tên, giá, thương hiệu, tình trạng kho của sản phẩm
+- **Hỗ trợ đa dạng**: Đơn hàng, bảo hành, kỹ thuật, tư vấn
+- **Giao diện thân thiện**: Widget chat đẹp mắt, dễ sử dụng
+- **Lưu lịch sử**: Toàn bộ cuộc trò chuyện được lưu vào database
+
+### Cách sử dụng Chatbot:
+1. **Tìm nút chat**: Nút màu xanh ở góc dưới bên phải (chỉ hiện ở trang người dùng)
+2. **Bắt đầu trò chuyện**: Click để mở cửa sổ chat
+3. **Gửi tin nhắn**: Gõ câu hỏi bằng tiếng Việt tự nhiên
+4. **Nhận hỗ trợ**: Chatbot sẽ phản hồi ngay lập tức
+
+### Ví dụ câu hỏi:
+- "Tìm laptop Dell giá rẻ"
+- "Điện thoại Samsung có camera tốt"
+- "Kiểm tra đơn hàng của tôi"
+- "Chính sách bảo hành như thế nào?"
+- "Tôi muốn nói chuyện với nhân viên"
+
+### Công nghệ Chatbot:
+- **Backend**: ChatbotService với AI logic
+- **Database**: Bảng ChatMessages lưu trữ cuộc trò chuyện
+- **API**: RESTful endpoints `/api/chat/send`, `/api/chat/test`
+- **Frontend**: JavaScript với AJAX real-time
+- **NLP**: Xử lý ngôn ngữ tự nhiên tiếng Việt
 
 ## 📊 Database Schema
 
-Ứng dụng sử dụng 13 bảng chính:
+Ứng dụng sử dụng 14 bảng chính:
 
 - **Identity Tables**: AspNetUsers, AspNetRoles, AspNetUserRoles...
 - **Business Tables**: Products, Categories, Orders, OrderItems, CartItems, ProductReviews
+- **Chatbot Tables**: ChatMessages (lưu trữ cuộc trò chuyện)
 
 ## 🔧 Tính năng kỹ thuật
 
@@ -122,12 +156,15 @@ ElectronicsStore/
 - **Responsive Design**: Giao diện thích ứng với mobile
 - **Error Handling**: Xử lý lỗi toàn diện
 - **Security**: Bảo mật với ASP.NET Core Identity
+- **AI Chatbot**: Trợ lý ảo thông minh với NLP tiếng Việt
 
 ## 📝 Ghi chú
 
 - Database SQLite được tạo tự động khi chạy lần đầu
 - Hình ảnh sản phẩm được lưu trong thư mục `wwwroot/images/products/`
 - Ứng dụng hỗ trợ Vietnamese locale
+- Chatbot chỉ hiển thị ở trang người dùng, không hiện trong trang admin
+- Chatbot API endpoints: `/api/chat/send`, `/api/chat/test`, `/api/chat/history/{conversationId}`
 
 ## 🤝 Đóng góp
 

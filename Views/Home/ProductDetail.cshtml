@@ -174,8 +174,9 @@
             container.innerHTML = `
                 <div class="col-md-6">
                     <div class="position-relative">
-                        <img src="${product.imageUrl || 'https://via.placeholder.com/500x500/007bff/ffffff?text=' + encodeURIComponent(product.name)}" 
-                             class="img-fluid rounded shadow" alt="${product.name}">
+                        <img src="${product.imageUrl || '/images/placeholder-product.svg'}"
+                             class="img-fluid rounded shadow" alt="${product.name}"
+                             onerror="this.src='/images/placeholder-product.svg'">
                         ${discountBadge}
                     </div>
                 </div>

@@ -11,6 +11,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <!-- Chatbot CSS - Only for non-admin pages -->
+    @if (!ViewContext.RouteData.Values["controller"]?.ToString()?.Equals("Admin", StringComparison.OrdinalIgnoreCase) == true)
+    {
+        <link rel="stylesheet" href="~/css/chatbot.css" asp-append-version="true" />
+    }
     
     <style>
         /* Fix dropdown z-index issues completely */
@@ -716,12 +721,23 @@
     </footer>
     </div> <!-- End content-wrapper -->
 
+    <!-- Chatbot Widget - Only show for non-admin pages -->
+    @if (!ViewContext.RouteData.Values["controller"]?.ToString()?.Equals("Admin", StringComparison.OrdinalIgnoreCase) == true)
+    {
+        <partial name="_ChatbotWidget" />
+    }
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Custom JS -->
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <!-- Chatbot JS - Only for non-admin pages -->
+    @if (!ViewContext.RouteData.Values["controller"]?.ToString()?.Equals("Admin", StringComparison.OrdinalIgnoreCase) == true)
+    {
+        <script src="~/js/chatbot.js" asp-append-version="true"></script>
+    }
     
     <!-- Cart Count Update -->
     <script>

@@ -1,0 +1,96 @@
+<!-- Chatbot Widget -->
+<div id="chatbot-widget" class="chatbot-widget">
+    <!-- Chat Button -->
+    <div id="chatbot-button" class="chatbot-button" onclick="toggleChatbot()">
+        <i class="fas fa-comments"></i>
+        <span class="chatbot-notification" id="chatbot-notification" style="display: none;"></span>
+    </div>
+
+    <!-- Chat Window -->
+    <div id="chatbot-window" class="chatbot-window" style="display: none;">
+        <!-- Chat Header -->
+        <div class="chatbot-header">
+            <div class="chatbot-header-info">
+                <div class="chatbot-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="chatbot-title">
+                    <h6 class="mb-0">Trợ lý ảo</h6>
+                    <small class="text-muted">Electronics Store</small>
+                </div>
+            </div>
+            <div class="chatbot-header-actions">
+                <button class="btn btn-sm btn-link text-white" onclick="minimizeChatbot()" title="Thu nhỏ">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button class="btn btn-sm btn-link text-white" onclick="closeChatbot()" title="Đóng">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div id="chatbot-messages" class="chatbot-messages">
+            <div class="chatbot-message bot-message">
+                <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-content">
+                    <div class="message-bubble">
+                        Xin chào! Tôi là trợ lý ảo của Electronics Store. Tôi có thể giúp bạn tìm sản phẩm, trả lời câu hỏi về đơn hàng, hoặc hỗ trợ khách hàng. Bạn cần hỗ trợ gì?
+                    </div>
+                    <div class="message-time">
+                        <small class="text-muted">Vừa xong</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Replies -->
+        <div id="chatbot-quick-replies" class="chatbot-quick-replies">
+            <button class="quick-reply-btn" onclick="sendQuickReply('Tìm sản phẩm')">
+                <i class="fas fa-search me-1"></i>Tìm sản phẩm
+            </button>
+            <button class="quick-reply-btn" onclick="sendQuickReply('Kiểm tra đơn hàng')">
+                <i class="fas fa-box me-1"></i>Kiểm tra đơn hàng
+            </button>
+            <button class="quick-reply-btn" onclick="sendQuickReply('Hỗ trợ kỹ thuật')">
+                <i class="fas fa-tools me-1"></i>Hỗ trợ kỹ thuật
+            </button>
+            <button class="quick-reply-btn" onclick="sendQuickReply('Chính sách bảo hành')">
+                <i class="fas fa-shield-alt me-1"></i>Chính sách bảo hành
+            </button>
+            <button class="quick-reply-btn" onclick="sendQuickReply('Liên hệ nhân viên')">
+                <i class="fas fa-headset me-1"></i>Liên hệ nhân viên
+            </button>
+        </div>
+
+        <!-- Chat Input -->
+        <div class="chatbot-input">
+            <div class="input-group">
+                <input type="text" id="chatbot-message-input" class="form-control" 
+                       placeholder="Nhập tin nhắn..." 
+                       onkeypress="handleChatInputKeypress(event)"
+                       maxlength="2000">
+                <button class="btn btn-primary" type="button" onclick="sendMessage()" id="chatbot-send-btn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Typing Indicator -->
+        <div id="chatbot-typing" class="chatbot-typing" style="display: none;">
+            <div class="message-avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="typing-indicator">
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <small class="text-muted">Đang nhập...</small>
+            </div>
+        </div>
+    </div>
+</div>

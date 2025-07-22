@@ -57,6 +57,9 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Add Chatbot Service
+builder.Services.AddScoped<ElectronicsStore.Services.IChatbotService, ElectronicsStore.Services.ChatbotService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -291,9 +291,10 @@
             container.innerHTML = products.map(product => `
                 <div class="col-lg-4 col-md-6">
                     <div class="product-card card h-100 shadow-sm" onclick="window.location.href='/Home/ProductDetail/${product.id}'">
-                        <div class="product-image-container position-relative">
-                            <img src="${product.imageUrl || '/images/placeholder-product.jpg'}" 
-                                 class="card-img-top product-image" alt="${product.name}">
+                        <div class="product-image-container">
+                            <img src="${product.imageUrl || '/images/placeholder-product.svg'}"
+                                 class="product-image" alt="${product.name}"
+                                 onerror="this.src='/images/placeholder-product.svg'">
                             ${product.hasDiscount ? '<span class="badge bg-danger position-absolute top-0 end-0 m-2">Sale</span>' : ''}
                             ${!product.isInStock ? '<span class="badge bg-secondary position-absolute top-0 start-0 m-2">Out of Stock</span>' : ''}
                         </div>
@@ -330,8 +331,9 @@
                     <div class="row g-0">
                         <div class="col-md-3">
                             <a href="/Home/ProductDetail/${product.id}">
-                                <img src="${product.imageUrl || '/images/placeholder-product.jpg'}" 
-                                     class="img-fluid rounded-start h-100" alt="${product.name}">
+                                <img src="${product.imageUrl || '/images/placeholder-product.svg'}"
+                                     class="img-fluid rounded-start h-100" alt="${product.name}"
+                                     onerror="this.src='/images/placeholder-product.svg'">
                             </a>
                         </div>
                         <div class="col-md-9">
@@ -613,18 +615,25 @@
         box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
     }
 
-    .product-image {
+    .product-image-container {
+        overflow: hidden;
         height: 200px;
+        background-color: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .product-image {
+        width: 100%;
+        height: 100%;
         object-fit: cover;
         transition: all 0.3s ease;
     }
 
     .product-card:hover .product-image {
         transform: scale(1.05);
-    }
-
-    .product-image-container {
-        overflow: hidden;
     }
 
     .card-title {

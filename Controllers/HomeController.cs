@@ -31,12 +31,14 @@ namespace ElectronicsStore.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ElectronicsStoreContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public HomeController(ILogger<HomeController> logger, UserManager<User> userManager, ElectronicsStoreContext context) 
+        public HomeController(ILogger<HomeController> logger, UserManager<User> userManager, ElectronicsStoreContext context, IWebHostEnvironment webHostEnvironment)
             : base(userManager)
         {
             _logger = logger;
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public async Task<IActionResult> Index()
@@ -251,6 +253,32 @@ namespace ElectronicsStore.Controllers
                 _logger.LogError(ex, "Error cancelling order {OrderId}", id);
                 return Json(new { success = false, message = "Có lỗi xảy ra khi hủy đơn hàng" });
             }
+        }
+
+
+
+        [HttpGet]
+        public IActionResult ChatbotDiagnostic()
+        {
+            var diagnosticInfo = new
+            {
+                ChatbotCssExists = System.IO.File.Exists(Path.Combine(_webHostEnvironment.WebRootPath, "css", "chatbot.css")),
+                ChatbotJsExists = System.IO.File.Exists(Path.Combine(_webHostEnvironment.WebRootPath, "js", "chatbot.js")),
+                ChatbotWidgetExists = System.IO.File.Exists(Path.Combine(_webHostEnvironment.ContentRootPath, "Views", "Shared", "_ChatbotWidget.cshtml")),
+                TestPartialExists = System.IO.File.Exists(Path.Combine(_webHostEnvironment.ContentRootPath, "Views", "Shared", "_TestPartial.cshtml")),
+                WebRootPath = _webHostEnvironment.WebRootPath,
+                ContentRootPath = _webHostEnvironment.ContentRootPath,
+                ChatbotCssPath = Path.Combine(_webHostEnvironment.WebRootPath, "css", "chatbot.css"),
+                ChatbotJsPath = Path.Combine(_webHostEnvironment.WebRootPath, "js", "chatbot.js"),
+                ChatbotWidgetPath = Path.Combine(_webHostEnvironment.ContentRootPath, "Views", "Shared", "_ChatbotWidget.cshtml"),
+                ChatbotCssSize = System.IO.File.Exists(Path.Combine(_webHostEnvironment.WebRootPath, "css", "chatbot.css")) ?
+                    new System.IO.FileInfo(Path.Combine(_webHostEnvironment.WebRootPath, "css", "chatbot.css")).Length : 0,
+                ChatbotJsSize = System.IO.File.Exists(Path.Combine(_webHostEnvironment.WebRootPath, "js", "chatbot.js")) ?
+                    new System.IO.FileInfo(Path.Combine(_webHostEnvironment.WebRootPath, "js", "chatbot.js")).Length : 0,
+                CurrentTime = DateTime.Now
+            };
+
+            return Json(diagnosticInfo);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

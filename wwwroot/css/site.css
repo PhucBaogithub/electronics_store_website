@@ -589,4 +589,66 @@ img.product-image[data-error="true"] {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-} 
+}
+
+/* ===== CHATBOT INTEGRATION STYLES ===== */
+/* Ensure chatbot doesn't interfere with existing elements */
+.chatbot-widget {
+    z-index: 10000 !important;
+}
+
+/* Adjust chatbot position to avoid footer overlap */
+@media (max-height: 600px) {
+    .chatbot-widget {
+        bottom: 10px;
+    }
+
+    .chatbot-window {
+        height: calc(100vh - 120px);
+        max-height: 400px;
+    }
+}
+
+/* Ensure chatbot button doesn't interfere with scroll */
+.chatbot-button {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* Chatbot responsive adjustments for mobile */
+@media (max-width: 480px) {
+    .chatbot-window {
+        width: calc(100vw - 10px);
+        right: -5px;
+        bottom: 65px;
+    }
+
+    .chatbot-button {
+        width: 45px;
+        height: 45px;
+        bottom: 15px;
+        right: 15px;
+    }
+
+    .chatbot-button i {
+        font-size: 18px;
+    }
+}
+
+/* Ensure chatbot works well with existing modals */
+.modal.show ~ .chatbot-widget {
+    z-index: 1040;
+}
+
+/* Chatbot accessibility improvements */
+.chatbot-button:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+.chatbot-window .btn:focus {
+    outline: 1px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 1px;
+}

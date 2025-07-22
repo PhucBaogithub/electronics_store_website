@@ -17,6 +17,7 @@ namespace ElectronicsStore.Data
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<ProductReview> ProductReviews { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -76,6 +77,12 @@ namespace ElectronicsStore.Data
                 .WithMany(p => p.ProductReviews)
                 .HasForeignKey(pr => pr.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<ChatMessage>()
+                .HasOne(cm => cm.User)
+                .WithMany()
+                .HasForeignKey(cm => cm.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             // Configure decimal precision
             builder.Entity<Product>()

@@ -72,8 +72,9 @@
                                     {
                                         <tr>
                                             <td>
-                                                <img src="@(product.ImageUrl ?? "https://via.placeholder.com/50x50/007bff/ffffff?text=IMG")" 
-                                                     class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;" alt="@product.Name">
+                                                <img src="@(product.ImageUrl ?? "/images/placeholder-product.svg")"
+                                                     class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;" alt="@product.Name"
+                                                     onerror="this.src='/images/placeholder-product.svg'">
                                             </td>
                                             <td>
                                                 <div>
