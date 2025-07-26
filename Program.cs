@@ -60,6 +60,15 @@ builder.Services.AddSwaggerGen();
 // Add Chatbot Service
 builder.Services.AddScoped<ElectronicsStore.Services.IChatbotService, ElectronicsStore.Services.ChatbotService>();
 
+// Add Email Service
+builder.Services.AddScoped<ElectronicsStore.Services.IEmailService, ElectronicsStore.Services.EmailService>();
+
+// Add Password Reset Service
+builder.Services.AddScoped<ElectronicsStore.Services.IPasswordResetService, ElectronicsStore.Services.PasswordResetService>();
+
+// Add Background Services
+builder.Services.AddHostedService<ElectronicsStore.Services.PasswordResetCleanupService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

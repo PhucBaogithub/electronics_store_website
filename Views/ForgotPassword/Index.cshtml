@@ -1,0 +1,148 @@
+@model ElectronicsStore.Models.DTOs.ForgotPasswordDTO
+@{
+    ViewData["Title"] = "Quên mật khẩu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h3 class="mb-0">
+                        <i class="fas fa-key me-2"></i>
+                        Quên mật khẩu
+                    </h3>
+                    <p class="mb-0 mt-2">Nhập email để nhận mã xác nhận</p>
+                </div>
+                
+                <div class="card-body p-4">
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        
+                        @if (TempData["RetryAfter"] != null)
+                        {
+                            <div class="alert alert-info">
+                                <i class="fas fa-clock me-2"></i>
+                                <span id="countdown-message">Bạn có thể gửi lại sau: <span id="countdown">@((int)TempData["RetryAfter"])</span> giây</span>
+                            </div>
+                        }
+                    }
+
+                    <form asp-action="Index" method="post" id="forgotPasswordForm">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="mb-4">
+                            <label asp-for="Email" class="form-label fw-bold">
+                                <i class="fas fa-envelope me-2"></i>Email
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-at"></i>
+                                </span>
+                                <input asp-for="Email" class="form-control form-control-lg" 
+                                       placeholder="Nhập địa chỉ email của bạn" 
+                                       autocomplete="email" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                                <span class="spinner-border spinner-border-sm me-2 d-none" id="loadingSpinner"></span>
+                                <i class="fas fa-paper-plane me-2" id="submitIcon"></i>
+                                <span id="submitText">Gửi mã xác nhận</span>
+                            </button>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <p class="text-muted mb-2">Đã nhớ mật khẩu?</p>
+                            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-secondary">
+                                <i class="fas fa-sign-in-alt me-2"></i>
+                                Đăng nhập
+                            </a>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="card-footer bg-light text-center py-3">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Mã xác nhận sẽ được gửi đến email của bạn và có hiệu lực trong 15 phút
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function() {
+            // Handle form submission
+            $('#forgotPasswordForm').on('submit', function() {
+                const submitBtn = $('#submitBtn');
+                const submitIcon = $('#submitIcon');
+                const submitText = $('#submitText');
+                const loadingSpinner = $('#loadingSpinner');
+
+                // Show loading state
+                submitBtn.prop('disabled', true);
+                submitIcon.addClass('d-none');
+                loadingSpinner.removeClass('d-none');
+                submitText.text('Đang gửi...');
+            });
+
+            // Auto-focus email field
+            $('#Email').focus();
+        });
+    </script>
+    
+    <style>
+        .card {
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        }
+        
+        .input-group-text {
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+        }
+        
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+        }
+        
+        .alert {
+            border-radius: 10px;
+        }
+        
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+    </style>
+}

@@ -18,6 +18,7 @@ namespace ElectronicsStore.Data
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<ProductReview> ProductReviews { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
+        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

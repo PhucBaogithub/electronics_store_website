@@ -1,0 +1,225 @@
+@{
+    ViewData["Title"] = "Test Email Configuration";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-info text-white text-center py-4">
+                    <h3 class="mb-0">
+                        <i class="fas fa-envelope-open me-2"></i>
+                        Test Email Configuration
+                    </h3>
+                    <p class="mb-0 mt-2">Kiểm tra cấu hình Gmail SMTP</p>
+                </div>
+                
+                <div class="card-body p-4">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Hướng dẫn:</strong> Nhập email để test gửi email thông qua Gmail SMTP. 
+                        Đảm bảo bạn đã cấu hình đúng Gmail App Password trong appsettings.json.
+                    </div>
+
+                    <div id="testResults" class="mb-4"></div>
+
+                    <form id="testEmailForm">
+                        <div class="mb-3">
+                            <label for="testEmail" class="form-label fw-bold">
+                                <i class="fas fa-at me-2"></i>Email nhận test
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                                <input type="email" class="form-control" id="testEmail" 
+                                       placeholder="Nhập email để nhận test message" required>
+                                <button type="submit" class="btn btn-primary" id="sendTestBtn">
+                                    <span class="spinner-border spinner-border-sm me-2 d-none" id="testSpinner"></span>
+                                    <i class="fas fa-paper-plane me-2" id="testIcon"></i>
+                                    <span id="testBtnText">Gửi Test Email</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="fas fa-cog me-2"></i>
+                                        Configuration Check
+                                    </h6>
+                                    <div id="configStatus">
+                                        <small class="text-muted">Click "Gửi Test Email" để kiểm tra</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="fas fa-clock me-2"></i>
+                                        Last Test
+                                    </h6>
+                                    <div id="lastTestTime">
+                                        <small class="text-muted">Chưa có test nào</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <h6><i class="fas fa-list me-2"></i>Test Checklist:</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="check1">
+                            <label class="form-check-label" for="check1">
+                                Gmail 2FA đã được bật
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="check2">
+                            <label class="form-check-label" for="check2">
+                                App Password đã được tạo
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="check3">
+                            <label class="form-check-label" for="check3">
+                                appsettings.json đã được cập nhật
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="check4">
+                            <label class="form-check-label" for="check4">
+                                Test email gửi thành công
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-light text-center py-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Quay lại Forgot Password
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="/GMAIL_SETUP_GUIDE.md" target="_blank" class="btn btn-outline-info">
+                                <i class="fas fa-book me-2"></i>
+                                Hướng dẫn Setup Gmail
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#testEmailForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                const email = $('#testEmail').val();
+                if (!email) {
+                    showResult('Vui lòng nhập email', 'warning');
+                    return;
+                }
+                
+                // Show loading state
+                const btn = $('#sendTestBtn');
+                const icon = $('#testIcon');
+                const spinner = $('#testSpinner');
+                const btnText = $('#testBtnText');
+                
+                btn.prop('disabled', true);
+                icon.addClass('d-none');
+                spinner.removeClass('d-none');
+                btnText.text('Đang gửi...');
+                
+                // Send test email
+                $.get('/ForgotPassword/TestEmail', { email: email })
+                    .done(function(response) {
+                        if (response.success) {
+                            showResult('✅ Test email đã được gửi thành công!', 'success');
+                            $('#configStatus').html('<small class="text-success"><i class="fas fa-check me-1"></i>Configuration OK</small>');
+                            $('#lastTestTime').html(`<small class="text-success">${response.timestamp}</small>`);
+                            $('#check4').prop('checked', true);
+                        } else {
+                            showResult(`❌ Lỗi: ${response.message}`, 'danger');
+                            $('#configStatus').html('<small class="text-danger"><i class="fas fa-times me-1"></i>Configuration Error</small>');
+                        }
+                    })
+                    .fail(function(xhr) {
+                        showResult('❌ Lỗi kết nối. Vui lòng kiểm tra server.', 'danger');
+                        $('#configStatus').html('<small class="text-danger"><i class="fas fa-times me-1"></i>Connection Error</small>');
+                    })
+                    .always(function() {
+                        // Reset button state
+                        btn.prop('disabled', false);
+                        icon.removeClass('d-none');
+                        spinner.addClass('d-none');
+                        btnText.text('Gửi Test Email');
+                    });
+            });
+            
+            function showResult(message, type) {
+                const alertClass = `alert-${type}`;
+                const alert = $(`
+                    <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `);
+                
+                $('#testResults').html(alert);
+                
+                // Auto dismiss after 5 seconds
+                setTimeout(() => {
+                    alert.alert('close');
+                }, 5000);
+            }
+            
+            // Auto-focus email field
+            $('#testEmail').focus();
+        });
+    </script>
+    
+    <style>
+        .card {
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        }
+        
+        .form-check {
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-check-input:checked {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            border: none;
+        }
+        
+        .input-group-text {
+            background-color: #f8f9fa;
+        }
+    </style>
+}
