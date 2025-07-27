@@ -109,7 +109,7 @@ ElectronicsStore/
 5. Đánh giá sản phẩm đã mua
 6. Sử dụng chatbot để được hỗ trợ tức thì
 
-## 🤖 Chatbot - Trợ lý ảo thông minh
+## Chatbot - Trợ lý ảo thông minh
 
 ### Tính năng Chatbot:
 - **Hỗ trợ 24/7**: Trả lời câu hỏi của khách hàng bất cứ lúc nào
@@ -180,4 +180,4 @@ Email: baominecraft12344@gmail.com
 
 ---
 
-**Developed with ❤️ using ASP.NET Core** 
+**Developed with love using ASP.NET Core** 
