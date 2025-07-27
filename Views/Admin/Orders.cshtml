@@ -49,14 +49,22 @@
                                                     case ElectronicsStore.Models.OrderStatus.Pending:
                                                         <span class="badge bg-warning">Chờ xử lý</span>
                                                         break;
+                                                    case ElectronicsStore.Models.OrderStatus.Confirmed:
+                                                        <span class="badge bg-info">Đã xác nhận</span>
+                                                        break;
                                                     case ElectronicsStore.Models.OrderStatus.Processing:
                                                         <span class="badge bg-info">Đang xử lý</span>
                                                         break;
                                                     case ElectronicsStore.Models.OrderStatus.Shipped:
-                                                        <span class="badge bg-primary">Đã giao</span>
+                                                        <span class="badge bg-primary">Đã gửi</span>
                                                         break;
                                                     case ElectronicsStore.Models.OrderStatus.Delivered:
-                                                        <span class="badge bg-success">Hoàn thành</span>
+                                                        <span class="badge bg-success">Đã giao</span>
+                                                        break;
+                                                    case ElectronicsStore.Models.OrderStatus.Completed:
+                                                        <span class="badge bg-success">
+                                                            <i class="fas fa-check-circle me-1"></i>Hoàn thành
+                                                        </span>
                                                         break;
                                                     case ElectronicsStore.Models.OrderStatus.Cancelled:
                                                         <span class="badge bg-danger">Đã hủy</span>
@@ -78,9 +86,11 @@
                                                         </button>
                                                         <ul class="dropdown-menu">
                                                             <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(@order.Id, 'Pending')">Chờ xử lý</a></li>
+                                                            <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(@order.Id, 'Confirmed')">Đã xác nhận</a></li>
                                                             <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(@order.Id, 'Processing')">Đang xử lý</a></li>
-                                                            <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(@order.Id, 'Shipped')">Đã giao</a></li>
-                                                            <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(@order.Id, 'Delivered')">Hoàn thành</a></li>
+                                                            <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(@order.Id, 'Shipped')">Đã gửi</a></li>
+                                                            <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(@order.Id, 'Delivered')">Đã giao</a></li>
+                                                            <!-- Note: "Completed" status can only be set by customers when they confirm receipt -->
                                                             <li><hr class="dropdown-divider"></li>
                                                             <li><a class="dropdown-item text-danger" href="#" onclick="updateOrderStatus(@order.Id, 'Cancelled')">Hủy đơn</a></li>
                                                         </ul>

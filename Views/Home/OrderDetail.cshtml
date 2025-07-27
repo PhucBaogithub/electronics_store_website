@@ -24,11 +24,14 @@
                             <div class="col-md-6">
                                 <p><strong>Mã đơn hàng:</strong> @Model.OrderNumber</p>
                                 <p><strong>Ngày đặt:</strong> @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
-                                <p><strong>Trạng thái:</strong> 
+                                <p><strong>Trạng thái:</strong>
                                     @switch (Model.Status)
                                     {
                                         case ElectronicsStore.Models.OrderStatus.Pending:
                                             <span class="badge bg-warning">Chờ xử lý</span>
+                                            break;
+                                        case ElectronicsStore.Models.OrderStatus.Confirmed:
+                                            <span class="badge bg-info">Đã xác nhận</span>
                                             break;
                                         case ElectronicsStore.Models.OrderStatus.Processing:
                                             <span class="badge bg-info">Đang xử lý</span>
@@ -38,6 +41,11 @@
                                             break;
                                         case ElectronicsStore.Models.OrderStatus.Delivered:
                                             <span class="badge bg-success">Đã giao</span>
+                                            break;
+                                        case ElectronicsStore.Models.OrderStatus.Completed:
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check-circle me-1"></i>Hoàn thành
+                                            </span>
                                             break;
                                         case ElectronicsStore.Models.OrderStatus.Cancelled:
                                             <span class="badge bg-danger">Đã hủy</span>
@@ -159,6 +167,7 @@
                 </div>
 
                 <!-- Actions -->
+                <!-- Debug: Current Order Status = @Model.Status (@((int)Model.Status)) -->
                 @if (Model.Status == ElectronicsStore.Models.OrderStatus.Pending)
                 {
                     <div class="card">
@@ -169,6 +178,85 @@
                             <button class="btn btn-danger w-100" onclick="cancelOrder(@Model.Id)">
                                 <i class="fas fa-times me-2"></i>Hủy đơn hàng
                             </button>
+                        </div>
+                    </div>
+                }
+                @if (Model.Status == ElectronicsStore.Models.OrderStatus.Delivered)
+                {
+                    <div class="card border-success">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-truck me-2"></i>Đơn hàng đã được giao
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-success mb-3">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <strong>Đơn hàng đã được giao thành công!</strong><br>
+                                Vui lòng kiểm tra sản phẩm và xác nhận khi bạn đã nhận được hàng.
+                            </div>
+
+                            <div class="d-grid gap-2 mb-3">
+                                <button class="btn btn-success btn-lg" onclick="confirmOrderReceipt(@Model.Id)" id="confirmReceiptBtn">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    <strong>XÁC NHẬN ĐÃ NHẬN HÀNG</strong>
+                                </button>
+                            </div>
+
+                            <div class="text-muted small mb-3">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Sau khi xác nhận, đơn hàng sẽ được đánh dấu là hoàn thành và bạn có thể đánh giá sản phẩm.
+                            </div>
+
+                            <hr>
+                            <div class="mt-3">
+                                <h6 class="text-muted">
+                                    <i class="fas fa-star text-warning me-2"></i>Đánh giá sản phẩm:
+                                </h6>
+                                <div class="d-flex flex-wrap gap-2">
+                                    @foreach (var item in Model.OrderItems)
+                                    {
+                                        <button class="btn btn-outline-warning btn-sm" onclick="reviewProduct(@item.ProductId, '@item.Product.Name')">
+                                            <i class="fas fa-star me-1"></i>Đánh giá "@item.Product.Name"
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (Model.Status == ElectronicsStore.Models.OrderStatus.Completed)
+                {
+                    <div class="card border-success">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-check-circle me-2"></i>Đơn hàng hoàn thành
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-success mb-3">
+                                <i class="fas fa-heart me-2 text-danger"></i>
+                                <strong>Đơn hàng đã hoàn thành!</strong><br>
+                                Cảm ơn bạn đã mua sắm tại Electronics Store. Chúng tôi hy vọng bạn hài lòng với sản phẩm.
+                            </div>
+
+                            <div class="mt-3">
+                                <h6 class="text-muted">
+                                    <i class="fas fa-star text-warning me-2"></i>Đánh giá sản phẩm:
+                                </h6>
+                                <div class="d-flex flex-wrap gap-2">
+                                    @foreach (var item in Model.OrderItems)
+                                    {
+                                        <button class="btn btn-outline-warning btn-sm" onclick="reviewProduct(@item.ProductId, '@item.Product.Name')">
+                                            <i class="fas fa-star me-1"></i>Đánh giá "@item.Product.Name"
+                                        </button>
+                                    }
+                                </div>
+                                <div class="text-muted small mt-2">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Đánh giá của bạn sẽ giúp khách hàng khác có thêm thông tin về sản phẩm.
+                                </div>
+                            </div>
                         </div>
                     </div>
                 }
@@ -199,5 +287,92 @@
                 });
             }
         }
+
+        /**
+         * Confirm order receipt - Customer confirms they have received the delivered order
+         * This transitions the order from "Delivered" to "Completed" status
+         */
+        function confirmOrderReceipt(orderId) {
+            // Enhanced confirmation dialog
+            const confirmMessage = `
+🚚 XÁC NHẬN NHẬN HÀNG
+
+Bạn có chắc chắn đã nhận được tất cả sản phẩm trong đơn hàng này không?
+
+✅ Sau khi xác nhận:
+• Đơn hàng sẽ được đánh dấu là hoàn thành
+• Bạn có thể đánh giá sản phẩm
+• Không thể thay đổi trạng thái đơn hàng
+
+Nhấn OK để xác nhận hoặc Cancel để hủy.
+            `;
+
+            if (confirm(confirmMessage.trim())) {
+                // Show loading state
+                const button = document.getElementById('confirmReceiptBtn');
+                const originalText = button.innerHTML;
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang xử lý...';
+                button.classList.add('btn-secondary');
+                button.classList.remove('btn-success');
+
+                $.ajax({
+                    url: '/api/Orders/' + orderId + '/confirm-receipt',
+                    type: 'POST',
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Show success message with better styling
+                            button.innerHTML = '<i class="fas fa-check me-2"></i>Đã xác nhận thành công!';
+                            button.classList.add('btn-success');
+                            button.classList.remove('btn-secondary');
+
+                            // Show success alert
+                            const alertHtml = `
+                                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    <strong>Thành công!</strong> ${response.message}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            `;
+                            $('.card-body').prepend(alertHtml);
+
+                            // Refresh page after 2 seconds to show updated status
+                            setTimeout(() => {
+                                location.reload();
+                            }, 2000);
+                        } else {
+                            alert('❌ ' + response.message);
+
+                            // Restore button state
+                            button.disabled = false;
+                            button.innerHTML = originalText;
+                            button.classList.add('btn-success');
+                            button.classList.remove('btn-secondary');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error confirming order receipt:', error);
+                        alert('❌ Có lỗi xảy ra khi xác nhận nhận hàng. Vui lòng thử lại sau.');
+
+                        // Restore button state
+                        button.disabled = false;
+                        button.innerHTML = originalText;
+                        button.classList.add('btn-success');
+                        button.classList.remove('btn-secondary');
+                    }
+                });
+            }
+        }
+
+        /**
+         * Navigate to product review page
+         */
+        function reviewProduct(productId, productName) {
+            // Navigate to review page - you can customize this URL based on your review system
+            window.location.href = '/api/Reviews/product/' + productId;
+        }
     </script>
-} 
+}

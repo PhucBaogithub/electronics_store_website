@@ -46,6 +46,9 @@
                                             case ElectronicsStore.Models.OrderStatus.Pending:
                                                 <span class="badge bg-warning">Chờ xử lý</span>
                                                 break;
+                                            case ElectronicsStore.Models.OrderStatus.Confirmed:
+                                                <span class="badge bg-info">Đã xác nhận</span>
+                                                break;
                                             case ElectronicsStore.Models.OrderStatus.Processing:
                                                 <span class="badge bg-info">Đang xử lý</span>
                                                 break;
@@ -54,6 +57,11 @@
                                                 break;
                                             case ElectronicsStore.Models.OrderStatus.Delivered:
                                                 <span class="badge bg-success">Đã giao</span>
+                                                break;
+                                            case ElectronicsStore.Models.OrderStatus.Completed:
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-check-circle me-1"></i>Hoàn thành
+                                                </span>
                                                 break;
                                             case ElectronicsStore.Models.OrderStatus.Cancelled:
                                                 <span class="badge bg-danger">Đã hủy</span>
@@ -105,7 +113,25 @@
                                             @if (order.Status == ElectronicsStore.Models.OrderStatus.Delivered)
                                             {
                                                 <div class="mt-2">
-                                                    <small class="text-muted d-block mb-2">Đơn hàng đã được giao thành công!</small>
+                                                    <button class="btn btn-success btn-sm ms-2" onclick="confirmOrderReceipt(@order.Id)">
+                                                        <i class="fas fa-check-circle me-1"></i>Xác nhận đã nhận hàng
+                                                    </button>
+                                                    <small class="text-muted d-block mt-2 mb-2">Đơn hàng đã được giao thành công! Vui lòng xác nhận khi đã nhận hàng.</small>
+                                                    @foreach (var item in order.OrderItems)
+                                                    {
+                                                        <button class="btn btn-outline-warning btn-sm me-1 mb-1" onclick="reviewProduct(@item.ProductId, '@item.Product.Name')">
+                                                            <i class="fas fa-star me-1"></i>Đánh giá "@item.Product.Name"
+                                                        </button>
+                                                    }
+                                                </div>
+                                            }
+                                            @if (order.Status == ElectronicsStore.Models.OrderStatus.Completed)
+                                            {
+                                                <div class="mt-2">
+                                                    <small class="text-success d-block mb-2">
+                                                        <i class="fas fa-check-circle me-1"></i>
+                                                        Đơn hàng đã hoàn thành! Cảm ơn bạn đã mua sắm.
+                                                    </small>
                                                     @foreach (var item in order.OrderItems)
                                                     {
                                                         <button class="btn btn-outline-warning btn-sm me-1 mb-1" onclick="reviewProduct(@item.ProductId, '@item.Product.Name')">
@@ -148,6 +174,51 @@
                     },
                     error: function() {
                         alert('Có lỗi xảy ra khi hủy đơn hàng.');
+                    }
+                });
+            }
+        }
+
+        /**
+         * Confirm order receipt - Customer confirms they have received the delivered order
+         * This transitions the order from "Delivered" to "Completed" status
+         */
+        function confirmOrderReceipt(orderId) {
+            if (confirm('Bạn có chắc chắn đã nhận được hàng và muốn xác nhận hoàn thành đơn hàng này?')) {
+                // Show loading state
+                const button = event.target.closest('button');
+                const originalText = button.innerHTML;
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang xử lý...';
+
+                $.ajax({
+                    url: '/api/Orders/' + orderId + '/confirm-receipt',
+                    type: 'POST',
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Show success message
+                            alert(response.message);
+
+                            // Refresh page to show updated status
+                            location.reload();
+                        } else {
+                            alert(response.message);
+
+                            // Restore button state
+                            button.disabled = false;
+                            button.innerHTML = originalText;
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error confirming order receipt:', error);
+                        alert('Có lỗi xảy ra khi xác nhận nhận hàng. Vui lòng thử lại sau.');
+
+                        // Restore button state
+                        button.disabled = false;
+                        button.innerHTML = originalText;
                     }
                 });
             }

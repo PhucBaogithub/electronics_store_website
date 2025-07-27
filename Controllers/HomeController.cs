@@ -255,6 +255,73 @@ namespace ElectronicsStore.Controllers
             }
         }
 
+        /// <summary>
+        /// API endpoint for customers to confirm receipt of delivered orders
+        /// Only customers can transition orders from "Delivered" to "Completed"
+        /// </summary>
+        /// <param name="orderId">The ID of the order to confirm</param>
+        /// <returns>JSON response indicating success or failure</returns>
+        [Authorize]
+        [HttpPost]
+        [Route("api/Orders/{orderId}/confirm-receipt")]
+        public async Task<IActionResult> ConfirmOrderReceipt(int orderId)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return Json(new { success = false, message = "User not authenticated" });
+                }
+
+                // Find the order and verify ownership
+                var order = await _context.Orders
+                    .FirstOrDefaultAsync(o => o.Id == orderId && o.UserId == user.Id);
+
+                if (order == null)
+                {
+                    return Json(new { success = false, message = "Đơn hàng không tồn tại hoặc bạn không có quyền truy cập" });
+                }
+
+                // Only allow confirmation for delivered orders
+                if (order.Status != OrderStatus.Delivered)
+                {
+                    return Json(new {
+                        success = false,
+                        message = "Chỉ có thể xác nhận nhận hàng cho đơn hàng đã được giao"
+                    });
+                }
+
+                // Update order status to completed
+                order.Status = OrderStatus.Completed;
+
+                // Set delivered date if not already set
+                if (!order.DeliveredDate.HasValue)
+                {
+                    order.DeliveredDate = DateTime.UtcNow;
+                }
+
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Order {OrderId} confirmed as received by user {UserId}",
+                    orderId, user.Id);
+
+                return Json(new {
+                    success = true,
+                    message = "Cảm ơn bạn đã xác nhận nhận hàng! Đơn hàng đã hoàn thành.",
+                    newStatus = "Completed"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error confirming order receipt for order {OrderId}", orderId);
+                return Json(new {
+                    success = false,
+                    message = "Có lỗi xảy ra khi xác nhận nhận hàng. Vui lòng thử lại sau."
+                });
+            }
+        }
+
 
 
         [HttpGet]

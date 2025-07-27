@@ -10,7 +10,8 @@ namespace ElectronicsStore.Models
         Processing = 2,
         Shipped = 3,
         Delivered = 4,
-        Cancelled = 5
+        Completed = 5,  // Customer confirmed receipt
+        Cancelled = 6
     }
     
     public enum PaymentStatus

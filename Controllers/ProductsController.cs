@@ -271,6 +271,70 @@ namespace ElectronicsStore.Controllers
             }
         }
 
+        /// <summary>
+        /// Get related products based on the same category as the specified product
+        /// </summary>
+        /// <param name="id">Product ID to find related products for</param>
+        /// <param name="count">Number of related products to return (default: 6)</param>
+        /// <returns>List of related products</returns>
+        [HttpGet("{id}/related")]
+        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetRelatedProducts(int id, [FromQuery] int count = 6)
+        {
+            try
+            {
+                // First, get the current product to find its category
+                var currentProduct = await _context.Products
+                    .Where(p => p.Id == id && p.IsActive)
+                    .FirstOrDefaultAsync();
+
+                if (currentProduct == null)
+                {
+                    return NotFound($"Product with ID {id} not found");
+                }
+
+                // Get related products from the same category, excluding the current product
+                var relatedProducts = await _context.Products
+                    .Where(p => p.IsActive &&
+                               p.CategoryId == currentProduct.CategoryId &&
+                               p.Id != id) // Exclude current product
+                    .Include(p => p.Category)
+                    .OrderByDescending(p => p.IsFeatured) // Prioritize featured products
+                    .ThenByDescending(p => p.CreatedAt) // Then by newest
+                    .Take(count)
+                    .Select(p => new ProductDTO
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        Description = p.Description,
+                        Price = p.Price,
+                        DiscountPrice = p.DiscountPrice,
+                        StockQuantity = p.StockQuantity,
+                        ImageUrl = p.ImageUrl,
+                        Brand = p.Brand,
+                        Model = p.Model,
+                        IsActive = p.IsActive,
+                        IsFeatured = p.IsFeatured,
+                        CreatedAt = p.CreatedAt,
+                        CategoryId = p.CategoryId,
+                        CategoryName = p.Category != null ? p.Category.Name : "",
+                        FinalPrice = p.DiscountPrice ?? p.Price,
+                        HasDiscount = p.DiscountPrice.HasValue && p.DiscountPrice < p.Price,
+                        IsInStock = p.StockQuantity > 0
+                    })
+                    .ToListAsync();
+
+                _logger.LogInformation("Retrieved {Count} related products for product ID {ProductId} in category {CategoryId}",
+                    relatedProducts.Count, id, currentProduct.CategoryId);
+
+                return Ok(relatedProducts);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving related products for product ID {ProductId}", id);
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
         [HttpPost]
         [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<ProductDTO>> CreateProduct([FromBody] CreateProductDTO model)

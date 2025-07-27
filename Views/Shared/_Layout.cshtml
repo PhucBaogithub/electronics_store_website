@@ -733,6 +733,13 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Custom JS -->
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <!-- Theme Toggle JS -->
+    <script src="~/js/theme-toggle.js" asp-append-version="true"></script>
+    <!-- Related Products JS - Only for product detail pages -->
+    @if (ViewContext.RouteData.Values["action"]?.ToString()?.Equals("ProductDetail", StringComparison.OrdinalIgnoreCase) == true)
+    {
+        <script src="~/js/related-products.js" asp-append-version="true"></script>
+    }
     <!-- Chatbot JS - Only for non-admin pages -->
     @if (!ViewContext.RouteData.Values["controller"]?.ToString()?.Equals("Admin", StringComparison.OrdinalIgnoreCase) == true)
     {
