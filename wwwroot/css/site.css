@@ -1158,3 +1158,162 @@ a:hover {
 [data-theme="dark"] #confirmReceiptBtn:hover {
     box-shadow: 0 6px 12px rgba(40, 167, 69, 0.5);
 }
+
+/* ===== AUTHENTICATION PAGES THEME SUPPORT ===== */
+
+/* Login and Register page containers */
+.login-container {
+    background-color: var(--theme-bg-primary);
+    color: var(--theme-text-primary);
+    min-height: calc(100vh - 200px);
+    padding: 2rem 0;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Authentication cards */
+.login-card {
+    background-color: var(--theme-card-bg) !important;
+    border: 1px solid var(--theme-border-color) !important;
+    color: var(--theme-text-primary) !important;
+    transition: all 0.3s ease;
+}
+
+.login-card .card-body {
+    background-color: var(--theme-card-bg);
+    color: var(--theme-text-primary);
+}
+
+/* Form elements in auth pages */
+.login-card .form-label {
+    color: var(--theme-text-primary) !important;
+}
+
+.login-card .form-control {
+    background-color: var(--theme-bg-secondary) !important;
+    border-color: var(--theme-border-color) !important;
+    color: var(--theme-text-primary) !important;
+}
+
+.login-card .form-control:focus {
+    background-color: var(--theme-bg-secondary) !important;
+    border-color: var(--primary-color) !important;
+    color: var(--theme-text-primary) !important;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.login-card .form-control::placeholder {
+    color: var(--theme-text-muted) !important;
+}
+
+/* Input group styling */
+.login-card .input-group-text {
+    background-color: var(--theme-bg-tertiary) !important;
+    border-color: var(--theme-border-color) !important;
+    color: var(--theme-text-muted) !important;
+}
+
+/* Text colors in auth pages */
+.login-card .text-dark {
+    color: var(--theme-text-primary) !important;
+}
+
+.login-card .text-muted {
+    color: var(--theme-text-muted) !important;
+}
+
+/* Links in auth pages */
+.login-card a {
+    color: var(--theme-link-color) !important;
+    transition: color 0.3s ease;
+}
+
+.login-card a:hover {
+    color: var(--theme-link-hover) !important;
+}
+
+/* Dark theme specific adjustments for auth pages */
+[data-theme="dark"] .login-card {
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="dark"] .login-card .form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(102, 179, 255, 0.25);
+}
+
+[data-theme="dark"] .login-card .btn-primary:hover {
+    box-shadow: 0 4px 8px rgba(102, 179, 255, 0.3);
+}
+
+/* Forgot Password page theme support */
+.forgot-password-container {
+    background-color: var(--theme-bg-primary);
+    color: var(--theme-text-primary);
+    min-height: calc(100vh - 200px);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.forgot-password-card {
+    background-color: var(--theme-card-bg) !important;
+    border: 1px solid var(--theme-border-color) !important;
+    color: var(--theme-text-primary) !important;
+}
+
+.forgot-password-card .card-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #0056b3 100%) !important;
+    border-bottom-color: var(--theme-border-color) !important;
+}
+
+.forgot-password-card .card-footer {
+    background-color: var(--theme-bg-secondary) !important;
+    border-top-color: var(--theme-border-color) !important;
+    color: var(--theme-text-muted) !important;
+}
+
+/* Dark theme adjustments for forgot password */
+[data-theme="dark"] .forgot-password-card {
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="dark"] .forgot-password-card .card-header {
+    background: linear-gradient(135deg, #66b3ff 0%, #4da6ff 100%) !important;
+}
+
+/* Button styling in auth pages */
+.login-card .btn-primary,
+.forgot-password-card .btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #0056b3 100%);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.login-card .btn-primary:hover,
+.forgot-password-card .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
+}
+
+[data-theme="dark"] .login-card .btn-primary,
+[data-theme="dark"] .forgot-password-card .btn-primary {
+    background: linear-gradient(135deg, #66b3ff 0%, #4da6ff 100%);
+}
+
+/* Alert styling in auth pages */
+.login-card .alert,
+.forgot-password-card .alert {
+    background-color: var(--theme-bg-secondary) !important;
+    border-color: var(--theme-border-color) !important;
+    color: var(--theme-text-primary) !important;
+}
+
+[data-theme="dark"] .login-card .alert-danger,
+[data-theme="dark"] .forgot-password-card .alert-warning {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+    border-color: #dc3545 !important;
+    color: #ff6b6b !important;
+}
+
+[data-theme="dark"] .forgot-password-card .alert-info {
+    background-color: rgba(13, 110, 253, 0.1) !important;
+    border-color: #0d6efd !important;
+    color: #99ccff !important;
+}
