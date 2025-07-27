@@ -1165,6 +1165,45 @@ a:hover {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Force override for authentication pages */
+body .login-container {
+    background: var(--theme-bg-primary) !important;
+}
+
+[data-theme="dark"] body .login-container {
+    background: #121212 !important;
+}
+
+/* Override any gradient backgrounds */
+.login-container,
+.login-container::before,
+.login-container::after {
+    background: var(--theme-bg-primary) !important;
+    background-image: none !important;
+}
+
+/* High priority overrides for authentication pages */
+html body .login-container {
+    background: var(--theme-bg-primary) !important;
+    background-image: none !important;
+}
+
+html[data-theme="dark"] body .login-container {
+    background: #121212 !important;
+    background-image: none !important;
+}
+
+/* Override inline styles with highest specificity */
+.login-container[style*="background"] {
+    background: var(--theme-bg-primary) !important;
+    background-image: none !important;
+}
+
+[data-theme="dark"] .login-container[style*="background"] {
+    background: #121212 !important;
+    background-image: none !important;
+}
+
 /* Authentication specific classes */
 .auth-icon {
     color: var(--theme-text-primary) !important;
