@@ -256,6 +256,59 @@ namespace ElectronicsStore.Controllers
         }
 
         /// <summary>
+        /// API endpoint for customers to report not receiving delivered orders
+        /// Transitions orders from "Delivered" back to "Processing" for investigation
+        /// </summary>
+        /// <param name="orderId">The ID of the order to report</param>
+        /// <returns>JSON response indicating success or failure</returns>
+        [Authorize]
+        [HttpPost]
+        [Route("api/Orders/{orderId}/report-not-received")]
+        public async Task<IActionResult> ReportNotReceived(int orderId)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return Json(new { success = false, message = "User not authenticated" });
+                }
+
+                // Find the order and verify ownership
+                var order = await _context.Orders
+                    .FirstOrDefaultAsync(o => o.Id == orderId && o.UserId == user.Id);
+
+                if (order == null)
+                {
+                    return Json(new { success = false, message = "Order not found or access denied" });
+                }
+
+                // Only allow reporting for delivered orders
+                if (order.Status != OrderStatus.Delivered)
+                {
+                    return Json(new { success = false, message = "Chỉ có thể báo cáo chưa nhận được hàng cho đơn hàng đã giao" });
+                }
+
+                // Change status back to Processing for investigation
+                order.Status = OrderStatus.Processing;
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Order {OrderId} reported as not received by user {UserId}", orderId, user.Id);
+
+                return Json(new {
+                    success = true,
+                    message = "Đã báo cáo chưa nhận được hàng. Đơn hàng sẽ được xử lý lại.",
+                    newStatus = "Processing"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error reporting not received for order {OrderId}", orderId);
+                return Json(new { success = false, message = "Có lỗi xảy ra khi báo cáo. Vui lòng thử lại sau." });
+            }
+        }
+
+        /// <summary>
         /// API endpoint for customers to confirm receipt of delivered orders
         /// Only customers can transition orders from "Delivered" to "Completed"
         /// </summary>

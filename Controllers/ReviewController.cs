@@ -76,12 +76,12 @@ namespace ElectronicsStore.Controllers
                     var currentUser = await _userManager.GetUserAsync(User);
                     if (currentUser != null)
                     {
-                        // Check if user has purchased this product
+                        // Check if user has purchased this product and order is completed
                         var hasPurchased = await _context.OrderItems
                             .Include(oi => oi.Order)
-                            .AnyAsync(oi => oi.ProductId == productId && 
+                            .AnyAsync(oi => oi.ProductId == productId &&
                                           oi.Order.UserId == currentUser.Id &&
-                                          oi.Order.Status == OrderStatus.Delivered);
+                                          oi.Order.Status == OrderStatus.Completed);
 
                         canReview = hasPurchased;
 
@@ -141,16 +141,16 @@ namespace ElectronicsStore.Controllers
                     return NotFound("Product not found");
                 }
 
-                // Check if user has purchased this product
+                // Check if user has purchased this product and order is completed
                 var hasPurchased = await _context.OrderItems
                     .Include(oi => oi.Order)
-                    .AnyAsync(oi => oi.ProductId == createReviewDTO.ProductId && 
+                    .AnyAsync(oi => oi.ProductId == createReviewDTO.ProductId &&
                                   oi.Order.UserId == user.Id &&
-                                  oi.Order.Status == OrderStatus.Delivered);
+                                  oi.Order.Status == OrderStatus.Completed);
 
                 if (!hasPurchased)
                 {
-                    return BadRequest("You can only review products you have purchased and received");
+                    return BadRequest("Bạn chỉ có thể đánh giá sản phẩm đã mua và đã xác nhận nhận hàng");
                 }
 
                 // Check if user has already reviewed this product

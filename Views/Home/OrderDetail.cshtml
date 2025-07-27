@@ -201,27 +201,19 @@
                                     <i class="fas fa-check-circle me-2"></i>
                                     <strong>XÁC NHẬN ĐÃ NHẬN HÀNG</strong>
                                 </button>
+                                <button class="btn btn-outline-danger" onclick="reportNotReceived(@Model.Id)" id="reportNotReceivedBtn">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <strong>CHƯA NHẬN ĐƯỢC HÀNG</strong>
+                                </button>
                             </div>
 
                             <div class="text-muted small mb-3">
                                 <i class="fas fa-info-circle me-1"></i>
-                                Sau khi xác nhận, đơn hàng sẽ được đánh dấu là hoàn thành và bạn có thể đánh giá sản phẩm.
+                                Sau khi xác nhận đã nhận hàng, đơn hàng sẽ được đánh dấu là hoàn thành và bạn có thể đánh giá sản phẩm.
+                                Nếu chưa nhận được hàng, đơn hàng sẽ được chuyển về trạng thái xử lý để kiểm tra lại.
                             </div>
 
-                            <hr>
-                            <div class="mt-3">
-                                <h6 class="text-muted">
-                                    <i class="fas fa-star text-warning me-2"></i>Đánh giá sản phẩm:
-                                </h6>
-                                <div class="d-flex flex-wrap gap-2">
-                                    @foreach (var item in Model.OrderItems)
-                                    {
-                                        <button class="btn btn-outline-warning btn-sm" onclick="reviewProduct(@item.ProductId, '@item.Product.Name')">
-                                            <i class="fas fa-star me-1"></i>Đánh giá "@item.Product.Name"
-                                        </button>
-                                    }
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                 }
@@ -368,11 +360,60 @@ Nhấn OK để xác nhận hoặc Cancel để hủy.
         }
 
         /**
-         * Navigate to product review page
+         * Navigate to product detail page for review
          */
         function reviewProduct(productId, productName) {
-            // Navigate to review page - you can customize this URL based on your review system
-            window.location.href = '/api/Reviews/product/' + productId;
+            // Navigate to product detail page where user can write review
+            window.location.href = '/Products/Details/' + productId + '#reviews';
+        }
+
+        /**
+         * Report order as not received
+         */
+        function reportNotReceived(orderId) {
+            if (confirm('Bạn có chắc chắn chưa nhận được hàng? Đơn hàng sẽ được chuyển về trạng thái xử lý để kiểm tra lại.')) {
+                const button = document.getElementById('reportNotReceivedBtn');
+                const originalText = button.innerHTML;
+
+                // Update button state
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang xử lý...';
+                button.classList.remove('btn-outline-danger');
+                button.classList.add('btn-secondary');
+
+                $.ajax({
+                    url: '/api/Orders/' + orderId + '/report-not-received',
+                    type: 'POST',
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            alert('✅ ' + response.message);
+                            // Reload page to show updated status
+                            location.reload();
+                        } else {
+                            alert('❌ ' + response.message);
+
+                            // Restore button state
+                            button.disabled = false;
+                            button.innerHTML = originalText;
+                            button.classList.add('btn-outline-danger');
+                            button.classList.remove('btn-secondary');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error reporting not received:', error);
+                        alert('❌ Có lỗi xảy ra khi báo cáo. Vui lòng thử lại sau.');
+
+                        // Restore button state
+                        button.disabled = false;
+                        button.innerHTML = originalText;
+                        button.classList.add('btn-outline-danger');
+                        button.classList.remove('btn-secondary');
+                    }
+                });
+            }
         }
     </script>
 }
