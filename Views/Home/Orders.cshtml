@@ -113,16 +113,18 @@
                                             @if (order.Status == ElectronicsStore.Models.OrderStatus.Delivered)
                                             {
                                                 <div class="mt-2">
-                                                    <button class="btn btn-success btn-sm ms-2" onclick="confirmOrderReceipt(@order.Id)">
-                                                        <i class="fas fa-check-circle me-1"></i>Xác nhận đã nhận hàng
-                                                    </button>
-                                                    <small class="text-muted d-block mt-2 mb-2">Đơn hàng đã được giao thành công! Vui lòng xác nhận khi đã nhận hàng.</small>
-                                                    @foreach (var item in order.OrderItems)
-                                                    {
-                                                        <button class="btn btn-outline-warning btn-sm me-1 mb-1" onclick="reviewProduct(@item.ProductId, '@item.Product.Name')">
-                                                            <i class="fas fa-star me-1"></i>Đánh giá "@item.Product.Name"
+                                                    <div class="d-flex gap-2 mb-2">
+                                                        <button class="btn btn-success btn-sm" onclick="confirmOrderReceipt(@order.Id)">
+                                                            <i class="fas fa-check-circle me-1"></i>Xác nhận đã nhận hàng
                                                         </button>
-                                                    }
+                                                        <button class="btn btn-outline-danger btn-sm" onclick="reportNotReceived(@order.Id)">
+                                                            <i class="fas fa-exclamation-triangle me-1"></i>Chưa nhận được hàng
+                                                        </button>
+                                                    </div>
+                                                    <small class="text-muted d-block">
+                                                        Đơn hàng đã được giao thành công! Vui lòng xác nhận tình trạng nhận hàng.
+                                                        Sau khi xác nhận đã nhận hàng, bạn có thể đánh giá sản phẩm.
+                                                    </small>
                                                 </div>
                                             }
                                             @if (order.Status == ElectronicsStore.Models.OrderStatus.Completed)
@@ -224,9 +226,61 @@
             }
         }
 
+        /**
+         * Navigate to product detail page for review
+         */
         function reviewProduct(productId, productName) {
-            // Navigate to product detail page with a flag to show review section
-            window.location.href = '@Url.Action("ProductDetail", "Home")?id=' + productId + '&review=true';
+            // Navigate to product detail page where user can write review
+            window.location.href = '/Products/Details/' + productId + '#reviews';
+        }
+
+        /**
+         * Report order as not received
+         */
+        function reportNotReceived(orderId) {
+            if (confirm('Bạn có chắc chắn chưa nhận được hàng? Đơn hàng sẽ được chuyển về trạng thái xử lý để kiểm tra lại.')) {
+                const button = event.target.closest('button');
+                const originalText = button.innerHTML;
+
+                // Update button state
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang xử lý...';
+                button.classList.remove('btn-outline-danger');
+                button.classList.add('btn-secondary');
+
+                $.ajax({
+                    url: '/api/Orders/' + orderId + '/report-not-received',
+                    type: 'POST',
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            alert('✅ ' + response.message);
+                            // Reload page to show updated status
+                            location.reload();
+                        } else {
+                            alert('❌ ' + response.message);
+
+                            // Restore button state
+                            button.disabled = false;
+                            button.innerHTML = originalText;
+                            button.classList.add('btn-outline-danger');
+                            button.classList.remove('btn-secondary');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error reporting not received:', error);
+                        alert('❌ Có lỗi xảy ra khi báo cáo. Vui lòng thử lại sau.');
+
+                        // Restore button state
+                        button.disabled = false;
+                        button.innerHTML = originalText;
+                        button.classList.add('btn-outline-danger');
+                        button.classList.remove('btn-secondary');
+                    }
+                });
+            }
         }
     </script>
 } 

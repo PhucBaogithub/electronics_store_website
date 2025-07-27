@@ -455,33 +455,124 @@ namespace ElectronicsStore.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ToggleUserStatus(string id)
+        public async Task<IActionResult> ToggleUserStatus([FromBody] ToggleUserStatusRequest request)
         {
             try
             {
-                var user = await _userManager.FindByIdAsync(id);
+                if (string.IsNullOrEmpty(request?.Id))
+                {
+                    return Json(new { success = false, message = "ID người dùng không hợp lệ" });
+                }
+
+                var user = await _userManager.FindByIdAsync(request.Id);
                 if (user == null)
                 {
+                    _logger.LogWarning("User not found with ID: {UserId}", request.Id);
                     return Json(new { success = false, message = "Người dùng không tồn tại" });
+                }
+
+                // Check if trying to deactivate admin
+                var userRoles = await _userManager.GetRolesAsync(user);
+                if (userRoles.Contains("Admin") && user.IsActive)
+                {
+                    return Json(new { success = false, message = "Không thể khóa tài khoản Admin" });
                 }
 
                 user.IsActive = !user.IsActive;
                 var result = await _userManager.UpdateAsync(user);
-                
+
                 if (result.Succeeded)
                 {
-                    return Json(new { success = true, message = "Cập nhật trạng thái thành công", isActive = user.IsActive });
+                    _logger.LogInformation("User status toggled successfully for user {UserId}. New status: {IsActive}", request.Id, user.IsActive);
+                    return Json(new {
+                        success = true,
+                        message = user.IsActive ? "Kích hoạt tài khoản thành công" : "Khóa tài khoản thành công",
+                        isActive = user.IsActive
+                    });
                 }
                 else
                 {
-                    return Json(new { success = false, message = "Có lỗi xảy ra khi cập nhật" });
+                    _logger.LogError("Failed to update user status for user {UserId}. Errors: {Errors}",
+                        request.Id, string.Join(", ", result.Errors.Select(e => e.Description)));
+                    return Json(new { success = false, message = "Có lỗi xảy ra khi cập nhật trạng thái" });
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error toggling user status for user {UserId}", id);
+                _logger.LogError(ex, "Error toggling user status for user {UserId}", request?.Id);
                 return Json(new { success = false, message = "Có lỗi xảy ra khi cập nhật trạng thái" });
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser([FromBody] DeleteUserRequest request)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(request?.Id))
+                {
+                    return Json(new { success = false, message = "ID người dùng không hợp lệ" });
+                }
+
+                var user = await _userManager.FindByIdAsync(request.Id);
+                if (user == null)
+                {
+                    _logger.LogWarning("User not found with ID: {UserId}", request.Id);
+                    return Json(new { success = false, message = "Người dùng không tồn tại" });
+                }
+
+                // Check if trying to delete admin
+                var userRoles = await _userManager.GetRolesAsync(user);
+                if (userRoles.Contains("Admin"))
+                {
+                    return Json(new { success = false, message = "Không thể xóa tài khoản Admin" });
+                }
+
+                // Check if user has orders
+                var hasOrders = await _context.Orders.AnyAsync(o => o.UserId == user.Id);
+                if (hasOrders)
+                {
+                    return Json(new { success = false, message = "Không thể xóa người dùng có đơn hàng. Vui lòng khóa tài khoản thay vì xóa." });
+                }
+
+                // Remove user's cart items and reviews first
+                var cartItems = await _context.CartItems.Where(c => c.UserId == user.Id).ToListAsync();
+                var reviews = await _context.ProductReviews.Where(r => r.UserId == user.Id).ToListAsync();
+
+                _context.CartItems.RemoveRange(cartItems);
+                _context.ProductReviews.RemoveRange(reviews);
+                await _context.SaveChangesAsync();
+
+                // Delete user
+                var result = await _userManager.DeleteAsync(user);
+
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation("User deleted successfully: {UserId}", request.Id);
+                    return Json(new { success = true, message = "Xóa người dùng thành công" });
+                }
+                else
+                {
+                    _logger.LogError("Failed to delete user {UserId}. Errors: {Errors}",
+                        request.Id, string.Join(", ", result.Errors.Select(e => e.Description)));
+                    return Json(new { success = false, message = "Có lỗi xảy ra khi xóa người dùng" });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting user {UserId}", request?.Id);
+                return Json(new { success = false, message = "Có lỗi xảy ra khi xóa người dùng" });
+            }
+        }
     }
-} 
+
+    public class ToggleUserStatusRequest
+    {
+        public string Id { get; set; } = string.Empty;
+    }
+
+    public class DeleteUserRequest
+    {
+        public string Id { get; set; } = string.Empty;
+    }
+}

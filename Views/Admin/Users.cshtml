@@ -6,6 +6,7 @@
 }
 
 <div class="container-fluid py-4">
+    @Html.AntiForgeryToken()
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -75,8 +76,11 @@
                                                     </button>
                                                     @if (!userWithRole.Roles.Contains("Admin"))
                                                     {
-                                                        <button type="button" class="btn btn-outline-danger" title="Khóa tài khoản" onclick="confirmLockUser('@userWithRole.User.Id', '@userWithRole.User.UserName')">
+                                                        <button type="button" class="btn btn-outline-warning" title="Khóa/Mở khóa tài khoản" onclick="confirmLockUser('@userWithRole.User.Id', '@userWithRole.User.UserName')">
                                                             <i class="fas fa-ban"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-outline-danger" title="Xóa người dùng" onclick="confirmDeleteUser('@userWithRole.User.Id', '@userWithRole.User.UserName')">
+                                                            <i class="fas fa-trash"></i>
                                                         </button>
                                                     }
                                                 </div>
@@ -129,9 +133,43 @@
         }
 
         function confirmLockUser(userId, userName) {
-            if (confirm('Bạn có chắc chắn muốn khóa tài khoản "' + userName + '"?')) {
+            if (confirm('Bạn có chắc chắn muốn thay đổi trạng thái tài khoản "' + userName + '"?')) {
                 toggleUserStatus(userId);
             }
+        }
+
+        function confirmDeleteUser(userId, userName) {
+            if (confirm('⚠️ CẢNH BÁO: Bạn có chắc chắn muốn XÓA VĨNH VIỄN tài khoản "' + userName + '"?\n\nHành động này KHÔNG THỂ HOÀN TÁC!')) {
+                if (confirm('Xác nhận lần cuối: Xóa tài khoản "' + userName + '"?')) {
+                    deleteUser(userId);
+                }
+            }
+        }
+
+        function deleteUser(userId) {
+            fetch('/Admin/DeleteUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                },
+                body: JSON.stringify({
+                    id: userId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('✅ ' + data.message);
+                    location.reload();
+                } else {
+                    alert('❌ Lỗi: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('❌ Có lỗi xảy ra khi xóa người dùng');
+            });
         }
     </script>
 } 
