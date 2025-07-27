@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  electronics-store:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: electronics-store-app
+    ports:
+      - "8080:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Data Source=/app/Data/ElectronicsStore.db
+    volumes:
+      - electronics-data:/app/Data
+    restart: unless-stopped
+    networks:
+      - electronics-network
+
+  # Optional: Add a reverse proxy (nginx) for production
+  nginx:
+    image: nginx:alpine
+    container_name: electronics-store-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - electronics-store
+    restart: unless-stopped
+    networks:
+      - electronics-network
+
+volumes:
+  electronics-data:
+    driver: local
+
+networks:
+  electronics-network:
+    driver: bridge

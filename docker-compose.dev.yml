@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  electronics-store-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: electronics-store-dev
+    ports:
+      - "5221:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Data Source=/app/Data/ElectronicsStore.db
+    volumes:
+      - electronics-dev-data:/app/Data
+      # Mount source code for development (optional)
+      - ./wwwroot:/app/wwwroot
+    restart: unless-stopped
+    networks:
+      - electronics-dev-network
+
+volumes:
+  electronics-dev-data:
+    driver: local
+
+networks:
+  electronics-dev-network:
+    driver: bridge

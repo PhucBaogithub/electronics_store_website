@@ -96,6 +96,13 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+// Health check endpoint for Docker
+app.MapGet("/health", () => Results.Ok(new {
+    status = "healthy",
+    timestamp = DateTime.UtcNow,
+    version = "1.0.0"
+}));
+
 // Initialize database and seed data
 using (var scope = app.Services.CreateScope())
 {
@@ -181,4 +188,6 @@ async Task SeedData(UserManager<User> userManager, RoleManager<IdentityRole> rol
             await userManager.AddToRoleAsync(testUser, "User");
         }
     }
-} 
+}
+
+app.Run();
