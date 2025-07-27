@@ -1158,11 +1158,249 @@ a:hover {
 
 /* Login and Register page containers */
 .login-container {
-    background-color: var(--theme-bg-primary);
-    color: var(--theme-text-primary);
+    background-color: var(--theme-bg-primary) !important;
+    color: var(--theme-text-primary) !important;
     min-height: calc(100vh - 200px);
     padding: 2rem 0;
     transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Authentication specific classes */
+.auth-icon {
+    color: var(--theme-text-primary) !important;
+    transition: color 0.3s ease;
+}
+
+.auth-title {
+    color: var(--theme-text-primary) !important;
+    transition: color 0.3s ease;
+}
+
+.auth-subtitle {
+    color: var(--theme-text-muted) !important;
+    transition: color 0.3s ease;
+}
+
+.auth-label {
+    color: var(--theme-text-primary) !important;
+    transition: color 0.3s ease;
+}
+
+.auth-label-icon {
+    color: var(--theme-text-muted) !important;
+    transition: color 0.3s ease;
+}
+
+.auth-input {
+    background-color: var(--theme-bg-secondary) !important;
+    border-color: var(--theme-border-color) !important;
+    color: var(--theme-text-primary) !important;
+    transition: all 0.3s ease;
+}
+
+.auth-input:focus {
+    background-color: var(--theme-bg-secondary) !important;
+    border-color: var(--theme-text-primary) !important;
+    color: var(--theme-text-primary) !important;
+    box-shadow: 0 0 0 0.2rem rgba(128, 128, 128, 0.25) !important;
+}
+
+.auth-input::placeholder {
+    color: var(--theme-text-muted) !important;
+}
+
+.auth-input-icon {
+    background-color: var(--theme-bg-tertiary) !important;
+    border-color: var(--theme-border-color) !important;
+    color: var(--theme-text-muted) !important;
+    transition: all 0.3s ease;
+}
+
+.auth-text {
+    color: var(--theme-text-muted) !important;
+    transition: color 0.3s ease;
+}
+
+.auth-link {
+    color: var(--theme-text-primary) !important;
+    transition: color 0.3s ease;
+}
+
+.auth-link:hover {
+    color: var(--theme-text-secondary) !important;
+}
+
+.auth-link-primary {
+    color: var(--theme-text-primary) !important;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.auth-link-primary:hover {
+    color: var(--theme-text-secondary) !important;
+}
+
+.auth-help-text {
+    color: var(--theme-text-muted) !important;
+    transition: color 0.3s ease;
+}
+
+.auth-error-text {
+    color: #dc3545 !important;
+    transition: color 0.3s ease;
+}
+
+/* Card header styling */
+.auth-card-header {
+    background: var(--theme-text-primary) !important;
+    color: var(--theme-bg-primary) !important;
+    border-bottom-color: var(--theme-border-color) !important;
+    transition: all 0.3s ease;
+}
+
+.auth-header-title {
+    color: var(--theme-bg-primary) !important;
+    transition: color 0.3s ease;
+}
+
+.auth-header-subtitle {
+    color: var(--theme-bg-primary) !important;
+    opacity: 0.9;
+    transition: color 0.3s ease;
+}
+
+.auth-header-icon {
+    color: var(--theme-bg-primary) !important;
+    transition: color 0.3s ease;
+}
+
+/* Button styling */
+.auth-btn-primary {
+    background: var(--theme-text-primary) !important;
+    color: var(--theme-bg-primary) !important;
+    border: 2px solid var(--theme-text-primary) !important;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.auth-btn-primary:hover {
+    background: var(--theme-bg-primary) !important;
+    color: var(--theme-text-primary) !important;
+    border-color: var(--theme-text-primary) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.auth-btn-primary:focus {
+    background: var(--theme-bg-primary) !important;
+    color: var(--theme-text-primary) !important;
+    border-color: var(--theme-text-primary) !important;
+    box-shadow: 0 0 0 0.2rem rgba(128, 128, 128, 0.25) !important;
+}
+
+.auth-btn-outline {
+    color: var(--theme-text-primary) !important;
+    border-color: var(--theme-text-primary) !important;
+    background: transparent !important;
+    transition: all 0.3s ease;
+}
+
+.auth-btn-outline:hover {
+    background: var(--theme-text-primary) !important;
+    color: var(--theme-bg-primary) !important;
+    border-color: var(--theme-text-primary) !important;
+    transform: translateY(-1px);
+}
+
+.auth-btn-outline:focus {
+    background: var(--theme-text-primary) !important;
+    color: var(--theme-bg-primary) !important;
+    border-color: var(--theme-text-primary) !important;
+    box-shadow: 0 0 0 0.2rem rgba(128, 128, 128, 0.25) !important;
+}
+
+/* Dark theme specific adjustments */
+[data-theme="dark"] .auth-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25) !important;
+}
+
+[data-theme="dark"] .auth-btn-primary:hover {
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .auth-btn-primary:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25) !important;
+}
+
+[data-theme="dark"] .auth-btn-outline:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Override Bootstrap classes in authentication pages */
+.login-container .text-primary,
+.forgot-password-container .text-primary {
+    color: var(--theme-text-primary) !important;
+}
+
+.login-container .text-muted,
+.forgot-password-container .text-muted {
+    color: var(--theme-text-muted) !important;
+}
+
+.login-container .btn-primary,
+.forgot-password-container .btn-primary {
+    background: var(--theme-text-primary) !important;
+    color: var(--theme-bg-primary) !important;
+    border-color: var(--theme-text-primary) !important;
+}
+
+.login-container .btn-primary:hover,
+.forgot-password-container .btn-primary:hover {
+    background: var(--theme-bg-primary) !important;
+    color: var(--theme-text-primary) !important;
+    border-color: var(--theme-text-primary) !important;
+}
+
+.login-container .btn-outline-secondary,
+.forgot-password-container .btn-outline-secondary {
+    color: var(--theme-text-primary) !important;
+    border-color: var(--theme-text-primary) !important;
+    background: transparent !important;
+}
+
+.login-container .btn-outline-secondary:hover,
+.forgot-password-container .btn-outline-secondary:hover {
+    background: var(--theme-text-primary) !important;
+    color: var(--theme-bg-primary) !important;
+    border-color: var(--theme-text-primary) !important;
+}
+
+/* Alert styling in auth pages */
+.login-container .alert,
+.forgot-password-container .alert {
+    background-color: var(--theme-bg-secondary) !important;
+    border-color: var(--theme-border-color) !important;
+    color: var(--theme-text-primary) !important;
+}
+
+.login-container .alert-danger,
+.forgot-password-container .alert-warning {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+    border-color: #dc3545 !important;
+    color: #dc3545 !important;
+}
+
+[data-theme="dark"] .login-container .alert-danger,
+[data-theme="dark"] .forgot-password-container .alert-warning {
+    background-color: rgba(220, 53, 69, 0.2) !important;
+    border-color: #ff6b6b !important;
+    color: #ff6b6b !important;
+}
+
+[data-theme="dark"] .forgot-password-container .alert-info {
+    background-color: rgba(13, 110, 253, 0.2) !important;
+    border-color: #4dabf7 !important;
+    color: #74c0fc !important;
 }
 
 /* Authentication cards */

@@ -9,12 +9,12 @@
         <div class="row justify-content-center">
             <div class="col-md-6 col-lg-5">
                 <div class="card forgot-password-card shadow-lg border-0">
-                <div class="card-header bg-primary text-white text-center py-4">
-                    <h3 class="mb-0">
-                        <i class="fas fa-key me-2"></i>
+                <div class="card-header auth-card-header text-white text-center py-4">
+                    <h3 class="mb-0 auth-header-title">
+                        <i class="fas fa-key me-2 auth-header-icon"></i>
                         Quên mật khẩu
                     </h3>
-                    <p class="mb-0 mt-2">Nhập email để nhận mã xác nhận</p>
+                    <p class="mb-0 mt-2 auth-header-subtitle">Nhập email để nhận mã xác nhận</p>
                 </div>
                 
                 <div class="card-body p-4">
@@ -39,22 +39,22 @@
                         @Html.AntiForgeryToken()
                         
                         <div class="mb-4">
-                            <label asp-for="Email" class="form-label fw-bold">
-                                <i class="fas fa-envelope me-2"></i>Email
+                            <label asp-for="Email" class="form-label fw-bold auth-label">
+                                <i class="fas fa-envelope me-2 auth-label-icon"></i>Email
                             </label>
                             <div class="input-group">
-                                <span class="input-group-text">
+                                <span class="input-group-text auth-input-icon">
                                     <i class="fas fa-at"></i>
                                 </span>
-                                <input asp-for="Email" class="form-control form-control-lg" 
-                                       placeholder="Nhập địa chỉ email của bạn" 
+                                <input asp-for="Email" class="form-control form-control-lg auth-input"
+                                       placeholder="Nhập địa chỉ email của bạn"
                                        autocomplete="email" />
                             </div>
-                            <span asp-validation-for="Email" class="text-danger small"></span>
+                            <span asp-validation-for="Email" class="auth-error-text small"></span>
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                            <button type="submit" class="btn btn-primary auth-btn-primary btn-lg" id="submitBtn">
                                 <span class="spinner-border spinner-border-sm me-2 d-none" id="loadingSpinner"></span>
                                 <i class="fas fa-paper-plane me-2" id="submitIcon"></i>
                                 <span id="submitText">Gửi mã xác nhận</span>
@@ -62,8 +62,8 @@
                         </div>
 
                         <div class="text-center mt-4">
-                            <p class="text-muted mb-2">Đã nhớ mật khẩu?</p>
-                            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-secondary">
+                            <p class="auth-text mb-2">Đã nhớ mật khẩu?</p>
+                            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-secondary auth-btn-outline">
                                 <i class="fas fa-sign-in-alt me-2"></i>
                                 Đăng nhập
                             </a>
